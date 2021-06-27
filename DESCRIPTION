@@ -55,4 +55,6 @@ Collate:
     'model_monitor_data_capture_config.R'
     'model_monitor_dataset_format.R'
     'model_monitor_monitoring_files.R'
+    'parameter.R'
+    'tuner.R'
     'zzz.R'
