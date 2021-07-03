@@ -9,6 +9,13 @@ Handles SageMaker Processing task to compute bias metrics and explain a model.
 \section{Super class}{
 \code{\link[R6sagemaker.common:Processor]{R6sagemaker.common::Processor}} -> \code{SageMakerClarifyProcessor}
 }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{job_name_prefix}}{Processing job name prefix}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -45,7 +52,9 @@ Initializes a ``Processor`` instance, computing bias metrics and model explanati
   sagemaker_session = NULL,
   env = NULL,
   tags = NULL,
-  network_config = NULL
+  network_config = NULL,
+  job_name_prefix = NULL,
+  version = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -91,6 +100,10 @@ https://docs.aws.amazon.com/sagemaker/latest/dg/API_Tag.html.}
 A :class:`~sagemaker.network.NetworkConfig`
 object that configures network isolation, encryption of
 inter-container traffic, security group IDs, and subnets.}
+
+\item{\code{job_name_prefix}}{(str): Processing job name prefix.}
+
+\item{\code{version}}{(str): Clarify version want to be used.}
 }
 \if{html}{\out{</div>}}
 }
@@ -120,7 +133,8 @@ Runs a ProcessingJob to compute the requested bias 'methods' of the input data.
   wait = TRUE,
   logs = TRUE,
   job_name = NULL,
-  kms_key = NULL
+  kms_key = NULL,
+  experiment_config = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -132,7 +146,17 @@ Runs a ProcessingJob to compute the requested bias 'methods' of the input data.
 \item{\code{data_bias_config}}{(:class:`~sagemaker.clarify.BiasConfig`): Config of sensitive groups.}
 
 \item{\code{methods}}{(str or list[str]): Selector of a subset of potential metrics:
-["CI", "DPL", "KL", "JS", "LP", "TVD", "KS", "CDDL"]. Defaults to computing all.}
+\itemize{
+   \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+   \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+   \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+   \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+   \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+   \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+   \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+   \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+}
+             Defaults to computing all.}
 
 \item{\code{wait}}{(bool): Whether the call should wait until the job completes (default: True).}
 
@@ -144,6 +168,10 @@ Only meaningful when ``wait`` is True (default: True).}
 
 \item{\code{kms_key}}{(str): The ARN of the KMS key that is used to encrypt the
 user code file (default: None).}
+
+\item{\code{experiment_config}}{(dict[str, str]): Experiment management configuration.
+Dictionary contains three optional keys:
+'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.}
 }
 \if{html}{\out{</div>}}
 }
@@ -167,7 +195,8 @@ Runs a ProcessingJob to compute the requested bias 'methods' of the model predic
   wait = TRUE,
   logs = TRUE,
   job_name = NULL,
-  kms_key = NULL
+  kms_key = NULL,
+  experiment_config = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -185,8 +214,17 @@ endpoint to be created.}
 Config of how to extract the predicted label from the model output.}
 
 \item{\code{methods}}{(str or list[str]): Selector of a subset of potential metrics:
-["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
-Defaults to computing all.}
+\itemize{
+   \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+   \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+   \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+   \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+   \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+   \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+   \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+   \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+}
+             Defaults to computing all.}
 
 \item{\code{wait}}{(bool): Whether the call should wait until the job completes (default: True).}
 
@@ -198,6 +236,10 @@ Only meaningful when ``wait`` is True (default: True).}
 
 \item{\code{kms_key}}{(str): The ARN of the KMS key that is used to encrypt the
 user code file (default: None).}
+
+\item{\code{experiment_config}}{(dict[str, str]): Experiment management configuration.
+Dictionary contains three optional keys:
+'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.}
 }
 \if{html}{\out{</div>}}
 }
@@ -222,7 +264,8 @@ Runs a ProcessingJob to compute the requested bias 'methods' of the model predic
   wait = TRUE,
   logs = TRUE,
   job_name = NULL,
-  kms_key = NULL
+  kms_key = NULL,
+  experiment_config = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -240,12 +283,33 @@ endpoint to be created.}
 Config of how to extract the predicted label from the model output.}
 
 \item{\code{pre_training_methods}}{(str or list[str]): Selector of a subset of potential metrics:
-["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
-Defaults to computing all.}
+\itemize{
+   \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+   \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+   \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+   \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+   \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+   \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+   \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+   \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+}
+             Defaults to computing all.}
 
 \item{\code{post_training_methods}}{(str or list[str]): Selector of a subset of potential metrics:
-["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
-Defaults to computing all.}
+\itemize{
+   \item{`DPPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dppl.html}}
+   \item{`DI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-di.html}}
+   \item{`DCA` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dca.html}}
+   \item{`DCR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dcr.html}}
+   \item{`RD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-rd.html}}
+   \item{`DAR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dar.html}}
+   \item{`DRR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-drr.html}}
+   \item{`AD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ad.html}}
+   \item{`CDDPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cddpl.html}}
+   \item{`TE` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-te.html}}
+   \item{`FT` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ft.html}}
+}
+             Defaults to computing all.}
 
 \item{\code{wait}}{(bool): Whether the call should wait until the job completes (default: True).}
 
@@ -257,6 +321,10 @@ Only meaningful when ``wait`` is True (default: True).}
 
 \item{\code{kms_key}}{(str): The ARN of the KMS key that is used to encrypt the
 user code file (default: None).}
+
+\item{\code{experiment_config}}{(dict[str, str]): Experiment management configuration.
+Dictionary contains three optional keys:
+'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.}
 }
 \if{html}{\out{</div>}}
 }
@@ -283,7 +351,8 @@ Runs a ProcessingJob computing for each example in the input the feature importa
   wait = TRUE,
   logs = TRUE,
   job_name = NULL,
-  kms_key = NULL
+  kms_key = NULL,
+  experiment_config = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -311,6 +380,10 @@ Only meaningful when ``wait`` is True (default: True).}
 
 \item{\code{kms_key}}{(str): The ARN of the KMS key that is used to encrypt the
 user code file (default: None).}
+
+\item{\code{experiment_config}}{(dict[str, str]): Experiment management configuration.
+Dictionary contains three optional keys:
+'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.}
 }
 \if{html}{\out{</div>}}
 }

@@ -42,7 +42,8 @@ Initializes config for SHAP.
   num_samples,
   agg_method = c("mean_abs", "median", "mean_sq"),
   use_logit = FALSE,
-  save_local_shap_values = TRUE
+  save_local_shap_values = TRUE,
+  seed = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -69,6 +70,8 @@ have log-odds units.}
 
 \item{\code{save_local_shap_values}}{(bool): Indicator of whether to save the local SHAP values
 in the output location. Default is True.}
+
+\item{\code{seed}}{(int): seed value to get deterministic SHAP values. Default is None.}
 }
 \if{html}{\out{</div>}}
 }

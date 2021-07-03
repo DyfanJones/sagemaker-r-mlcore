@@ -160,37 +160,64 @@ ModelConfig = R6Class("ModelConfig",
     #'              "application/jsonlines". The template should have one and only one placeholder
     #'              $features which will be replaced by a features list for to form the model inference
     #'              input.
+    #' @param custom_attributes (str): Provides additional information about a request for an
+    #'              inference submitted to a model hosted at an Amazon SageMaker endpoint. The
+    #'              information is an opaque value that is forwarded verbatim. You could use this
+    #'              value, for example, to provide an ID that you can use to track a request or to
+    #'              provide other metadata that a service endpoint was programmed to process. The value
+    #'              must consist of no more than 1024 visible US-ASCII characters as specified in
+    #'              Section 3.3.6. Field Value Components (
+    #'              \url{https://tools.ietf.org/html/rfc7230#section-3.2.6}) of the Hypertext Transfer
+    #'              Protocol (HTTP/1.1).
+    #' @param accelerator_type (str): The Elastic Inference accelerator type to deploy to the model
+    #'              endpoint instance for making inferences to the model, see
+    #'              \url{https://docs.aws.amazon.com/sagemaker/latest/dg/ei.html}.
+    #' @param endpoint_name_prefix (str): The endpoint name prefix of a new endpoint. Must follow
+    #'              pattern "^[a-zA-Z0-9](-\*[a-zA-Z0-9]".
     initialize = function(model_name,
                           instance_count,
                           instance_type,
                           accept_type=NULL,
                           content_type=NULL,
-                          content_template=NULL){
+                          content_template=NULL,
+                          custom_attributes=NULL,
+                          accelerator_type=NULL,
+                          endpoint_name_prefix=NULL){
       self$predictor_config = list(
         "model_name"= model_name,
         "instance_type"= instance_type,
         "initial_instance_count"= instance_count)
+
+      if (!is.null(endpoint_name_prefix)){
+        if(!grepl("^[a-zA-Z0-9](-*[a-zA-Z0-9])", endpoint_name_prefix))
+          ValueError$new(
+            "Invalid endpoint_name_prefix.",
+            " Please follow pattern ^[a-zA-Z0-9](-*[a-zA-Z0-9]).")
+        self$predictor_config[["endpoint_name_prefix"]] = endpoint_name_prefix
+      }
       if (!is.null(accept_type)){
         if (!(accept_type %in% c("text/csv", "application/jsonlines"))){
-          stop(sprintf("Invalid accept_type %s.", accept_type),
-            " Please choose text/csv or application/jsonlines.", call. = F)
+          ValueError$new(sprintf("Invalid accept_type %s.", accept_type),
+            " Please choose text/csv or application/jsonlines.")
           }
         self$predictor_config[["accept_type"]] = accept_type
       }
       if (!is.null(content_type)){
         if (!(content_type %in% c("text/csv", "application/jsonlines"))){
-          stop(sprintf("Invalid content_type %s.", content_type),
-               " Please choose text/csv or application/jsonlines.", call. = F)
+          ValueError$new(sprintf("Invalid content_type %s.", content_type),
+               " Please choose text/csv or application/jsonlines.")
           }
         self$predictor_config[["content_type"]] = content_type
       }
       if (!is.null(content_template)){
-        if (!("$features" %in% content_template)){
-          stop(sprintf("Invalid content_template %s.", content_template),
-               " Please include a placeholder $features.", call. = F)
+        if (!grepl("$features", content_template)){
+          ValueError$new(sprintf("Invalid content_template %s.", content_template),
+               " Please include a placeholder $features.")
         }
         self$predictor_config[["content_template"]] = content_template
       }
+      self$predictor_config[["custom_attributes"]] = custom_attributes
+      self$predictor_config[["accelerator_type"]] = accelerator_type
     },
 
     #' @description Returns part of the predictor dictionary of the analysis config.
@@ -271,9 +298,9 @@ ModelPredictedLabelConfig = R6Class("ModelPredictedLabelConfig",
         tryCatch({
           as.numeric(probability_threshold)},
           error = function(e){
-            stop(sprintf("Invalid probability_threshold %s. ", probability_threshold),
-                 "Please choose one that can be cast to float.", call. = F)
-          })
+            TypeError$new(sprintf("Invalid probability_threshold %s. ", probability_threshold),
+                 "Please choose one that can be cast to float.")
+        })
       }
       self$predictor_config = list()
       self$predictor_config[["label"]] =  label
@@ -339,11 +366,13 @@ SHAPConfig = R6Class("SHAPConfig",
     #'              have log-odds units.
     #' @param save_local_shap_values (bool): Indicator of whether to save the local SHAP values
     #'              in the output location. Default is True.
+    #' @param seed (int): seed value to get deterministic SHAP values. Default is None.
     initialize = function(baseline,
                           num_samples,
                           agg_method = c("mean_abs", "median", "mean_sq"),
                           use_logit=FALSE,
-                          save_local_shap_values=TRUE){
+                          save_local_shap_values=TRUE,
+                          seed=NULL){
       agg_method = match.arg(agg_method)
       self$shap_config = list(
         "baseline"= baseline,
@@ -351,11 +380,12 @@ SHAPConfig = R6Class("SHAPConfig",
         "agg_method"= agg_method,
         "use_logit"= use_logit,
         "save_local_shap_values"= save_local_shap_values)
+      self$shap_config[["seed"]] = seed
     },
 
     #' @description Returns config.
     get_explainability_config = function(){
-      return(list("shap": self$shap_config))
+      return(list("shap"=self$shap_config))
     }
   )
 )
@@ -366,6 +396,10 @@ SHAPConfig = R6Class("SHAPConfig",
 SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
   inherit = R6sagemaker.common::Processor,
   public = list(
+
+    #' @field job_name_prefix
+    #' Processing job name prefix
+    job_name_prefix = NULL,
 
     #' @description Initializes a ``Processor`` instance, computing bias metrics and model explanations.
     #' @param role (str): An AWS IAM role name or ARN. Amazon SageMaker Processing
@@ -397,6 +431,8 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #'              A :class:`~sagemaker.network.NetworkConfig`
     #'              object that configures network isolation, encryption of
     #'              inter-container traffic, security group IDs, and subnets.
+    #' @param job_name_prefix (str): Processing job name prefix.
+    #' @param version (str): Clarify version want to be used.
     initialize = function(role,
                           instance_count,
                           instance_type,
@@ -407,8 +443,11 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
                           sagemaker_session=NULL,
                           env=NULL,
                           tags=NULL,
-                          network_config=NULL){
-      container_uri = ImageUris$new()$retrieve("clarify", sagemaker_session$paws_region_name)
+                          network_config=NULL,
+                          job_name_prefix=NULL,
+                          version=NULL){
+      container_uri = ImageUris$new()$retrieve("clarify", sagemaker_session$paws_region_name,version)
+      self$job_name_prefix = job_name_prefix
       super$initialize(
         role,
         container_uri,
@@ -428,9 +467,9 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
 
     #' @description Overriding the base class method but deferring to specific run_* methods.
     run = function(){
-      stop(
+      NotImplementedError$new(
         "Please choose a method of run_pre_training_bias, run_post_training_bias or ",
-        "run_explainability.", call. = F)
+        "run_explainability.")
     },
 
     #' @description Runs a ProcessingJob to compute the requested bias 'methods' of the input data.
@@ -439,8 +478,17 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #' @param data_config (:class:`~sagemaker.clarify.DataConfig`): Config of the input/output data.
     #' @param data_bias_config (:class:`~sagemaker.clarify.BiasConfig`): Config of sensitive groups.
     #' @param methods (str or list[str]): Selector of a subset of potential metrics:
-    #'              ["CI", "DPL", "KL", "JS", "LP", "TVD", "KS", "CDDL"]. Defaults to computing all.
-    # TODO: Provide a pointer to the official documentation of those.
+    #' \itemize{
+    #'    \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+    #'    \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+    #'    \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+    #'    \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+    #'    \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+    #'    \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+    #'    \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+    #'    \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+    #' }
+    #'              Defaults to computing all.
     #' @param wait (bool): Whether the call should wait until the job completes (default: True).
     #' @param logs (bool): Whether to show the logs produced by the job.
     #'              Only meaningful when ``wait`` is True (default: True).
@@ -448,18 +496,26 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #'              "Clarify-Pretraining-Bias" and current timestamp.
     #' @param kms_key (str): The ARN of the KMS key that is used to encrypt the
     #'              user code file (default: None).
+    #' @param experiment_config (dict[str, str]): Experiment management configuration.
+    #'              Dictionary contains three optional keys:
+    #'              'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.
     run_pre_training_bias = function(data_config,
                                      data_bias_config,
                                      methods="all",
                                      wait=TRUE,
                                      logs=TRUE,
                                      job_name=NULL,
-                                     kms_key=NULL){
+                                     kms_key=NULL,
+                                     experiment_config=NULL){
       analysis_config = data_config$get_config()
       analysis_config.update(data_bias_config$get_config())
       analysis_config[["methods"]] = list("pre_training_bias"= list("methods"= methods))
-      if (is.null(job_name))
-        job_name = name_from_base("Clarify-Pretraining-Bias")
+      if (is.null(job_name)){
+        if (!is.null(self$job_name_prefix)) {
+          job_name = name_from_base(self$job_name_prefix)
+        } else {
+        job_name = name_from_base("Clarify-Pretraining-Bias")}
+      }
       private$.run(data_config, analysis_config, wait, logs, job_name, kms_key)
     },
 
@@ -475,8 +531,16 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #' @param model_predicted_label_config (:class:`~sagemaker.clarify.ModelPredictedLabelConfig`):
     #'              Config of how to extract the predicted label from the model output.
     #' @param methods (str or list[str]): Selector of a subset of potential metrics:
-    # TODO: Provide a pointer to the official documentation of those.
-    #'              ["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
+    #' \itemize{
+    #'    \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+    #'    \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+    #'    \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+    #'    \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+    #'    \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+    #'    \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+    #'    \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+    #'    \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+    #' }
     #'              Defaults to computing all.
     #' @param wait (bool): Whether the call should wait until the job completes (default: True).
     #' @param logs (bool): Whether to show the logs produced by the job.
@@ -485,6 +549,9 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #'              "Clarify-Posttraining-Bias" and current timestamp.
     #' @param kms_key (str): The ARN of the KMS key that is used to encrypt the
     #'              user code file (default: None).
+    #' @param experiment_config (dict[str, str]): Experiment management configuration.
+    #'              Dictionary contains three optional keys:
+    #'              'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.
     run_post_training_bias = function(data_config,
                                       data_bias_config,
                                       model_config,
@@ -493,19 +560,25 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
                                       wait=TRUE,
                                       logs=TRUE,
                                       job_name=NULL,
-                                      kms_key=NULL){
+                                      kms_key=NULL,
+                                      experiment_config=NULL){
       analysis_config = data_config$get_config()
-      analysis_config = c(analysis_config, data_bias_config$get_config())
+      analysis_config = modifyList(analysis_config, data_bias_config$get_config())
 
       ll = model_predicted_label_config$get_predictor_config()
       names(ll) = c("probability_threshold", "predictor_config")
 
-      ll$predictor_config = c(ll$predictor_config, model_config$get_predictor_config())
+      ll$predictor_config = modifyList(ll$predictor_config, model_config$get_predictor_config())
       analysis_config[["methods"]] = list("post_training_bias"= list("methods"= methods))
       analysis_config[["predictor"]] = ll$predictor_config
       ll$probability_threshold[["probability_threshold"]] = analysis_config
-      if (is.null(job_name))
-        job_name = name_from_base("Clarify-Posttraining-Bias")
+      if (is.null(job_name)){
+        if(!is.null(self$job_name_prefix)){
+          job_name = name_from_base(self$job_name_prefix)
+        } else {
+          job_name = name_from_base("Clarify-Posttraining-Bias")
+        }
+      }
       private$.run(data_config, analysis_config, wait, logs, job_name, kms_key)
     },
 
@@ -521,12 +594,31 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #' @param model_predicted_label_config (:class:`~sagemaker.clarify.ModelPredictedLabelConfig`):
     #'              Config of how to extract the predicted label from the model output.
     #' @param pre_training_methods (str or list[str]): Selector of a subset of potential metrics:
-    # TODO: Provide a pointer to the official documentation of those.
-    #'              ["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
+    #' \itemize{
+    #'    \item{`CI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ci.html}}
+    #'    \item{`DPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dpl.html}}
+    #'    \item{`KL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-kl.html}}
+    #'    \item{`JS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-js.html}}
+    #'    \item{`LP` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-lp.html}}
+    #'    \item{`TVD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-tvd.html}}
+    #'    \item{`KS` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ks.html}}
+    #'    \item{`CDDL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cdd.html}}
+    #' }
     #'              Defaults to computing all.
     #' @param post_training_methods (str or list[str]): Selector of a subset of potential metrics:
-    # TODO: Provide a pointer to the official documentation of those.
-    #'              ["DPPL", "DI", "DCA", "DCR", "RD", "DAR", "DRR", "AD", "CDDPL", "TE", "FT"].
+    #' \itemize{
+    #'    \item{`DPPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dppl.html}}
+    #'    \item{`DI` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-di.html}}
+    #'    \item{`DCA` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dca.html}}
+    #'    \item{`DCR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dcr.html}}
+    #'    \item{`RD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-rd.html}}
+    #'    \item{`DAR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-dar.html}}
+    #'    \item{`DRR` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-drr.html}}
+    #'    \item{`AD` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ad.html}}
+    #'    \item{`CDDPL` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-cddpl.html}}
+    #'    \item{`TE` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-te.html}}
+    #'    \item{`FT` \url{https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-post-training-bias-metric-ft.html}}
+    #' }
     #'              Defaults to computing all.
     #' @param wait (bool): Whether the call should wait until the job completes (default: True).
     #' @param logs (bool): Whether to show the logs produced by the job.
@@ -535,6 +627,9 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #'              "Clarify-Bias" and current timestamp.
     #' @param kms_key (str): The ARN of the KMS key that is used to encrypt the
     #'              user code file (default: None).
+    #' @param experiment_config (dict[str, str]): Experiment management configuration.
+    #'              Dictionary contains three optional keys:
+    #'              'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.
     run_bias = function(data_config,
                         bias_config,
                         model_config,
@@ -544,23 +639,29 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
                         wait=TRUE,
                         logs=TRUE,
                         job_name=NULL,
-                        kms_key=NULL){
+                        kms_key=NULL,
+                        experiment_config=NULL){
       analysis_config = data_config$get_config()
-      analysis_config = c(analysis_config, bias_config$get_config())
+      analysis_config = modifyList(analysis_config, bias_config$get_config())
       analysis_config[["predictor"]] = model_config$get_predictor_config()
       if (!is.null(model_predicted_label_config)){
         ll = model_predicted_label_config$get_predictor_config()
         names(ll) = c("probability_threshold", "predictor_config")
-      if (!islistempty(ll$predictor_config))
-        analysis_config[["predictor"]] = c(analysis_config[["predictor"]], ll$predictor_config)
-      if (!islistempty(ll$probability_threshold))
-        analysis_config[["probability_threshold"]] = ll$probability_threshold
+        if (!islistempty(ll$predictor_config))
+          analysis_config[["predictor"]] = modifyList(analysis_config[["predictor"]], ll$predictor_config)
+        if (!islistempty(ll$probability_threshold))
+          analysis_config[["probability_threshold"]] = ll$probability_threshold
       }
       analysis_config[["methods"]] = list(
         "pre_training_bias"= list("methods"= pre_training_methods),
         "post_training_bias"= list("methods"= post_training_methods))
-      if (is.null(job_name))
-        job_name = name_from_base("Clarify-Bias")
+      if (is.null(job_name)){
+        if(!is.null(self$job_name_prefix)){
+          job_name = name_from_base(self$job_name_prefix)
+        } else {
+          job_name = name_from_base("Clarify-Bias")
+        }
+      }
       private$.run(data_config, analysis_config, wait, logs, job_name, kms_key)
     },
 
@@ -587,6 +688,9 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     #'              "Clarify-Explainability" and current timestamp.
     #' @param kms_key (str): The ARN of the KMS key that is used to encrypt the
     #'              user code file (default: None).
+    #' @param experiment_config (dict[str, str]): Experiment management configuration.
+    #'              Dictionary contains three optional keys:
+    #'              'ExperimentName', 'TrialName', and 'TrialComponentDisplayName'.
     run_explainability = function(data_config,
                                   model_config,
                                   explainability_config,
@@ -594,14 +698,25 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
                                   wait=TRUE,
                                   logs=TRUE,
                                   job_name=NULL,
-                                  kms_key=NULL){
+                                  kms_key=NULL,
+                                  experiment_config=NULL){
       analysis_config = data_config$get_config()
       predictor_config = model_config$get_predictor_config()
-      predictor_config[["label"]] = model_scores
-      analysis_config[["methods"]] = explainability_config$get_explainability_config()
-      analysis_config[["predictor"]] = predictor_config
-      if (is.null(job_name))
-        job_name = name_from_base("Clarify-Explainability")
+      if (inherits(model_scores, "ModelPredictedLabelConfig")){
+        ll = model_scores$get_predictor_config()
+        names(ll) = c("probability_threshold", "predicted_label_config")
+        analysis_config[["probability_threshold"]] = ll$probability_threshold
+        predictor_config = modifyList(predictor_config, ll$predicted_label_config)
+      } else {
+        model_scores[["label"]] = predictor_config
+      }
+      if (is.null(job_name)){
+        if (!is.null(self$job_name_prefix)){
+          job_name = name_from_base(self$job_name_prefix)
+        } else {
+          job_name = name_from_base("Clarify-Explainability")
+        }
+      }
       private$.run(data_config, analysis_config, wait, logs, job_name, kms_key)
     }
   ),
@@ -626,12 +741,19 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
                     logs,
                     job_name,
                     kms_key){
-      analysis_config[["methods"]][["report"]] = list("name"= "report", "title"= "Analysis Report")
+      analysis_config[["methods"]][["report"]] = list("name"="report", "title"="Analysis Report")
 
       tmpdirname = tempdir()
       on.exit(unlink(tmpdirname, recursive = T))
       analysis_config_file = file.path(tmpdirname, "analysis_config.json")
       write_json(analysis_config, analysis_config_file, auto_unbox = T)
+
+      s3_analysis_config_file = .upload_analysis_config(
+        analysis_config_file,
+        data_config$s3_output_path,
+        self$sagemaker_session,
+        kms_key
+      )
 
       config_input = ProcessingInput$new(
         input_name="analysis_config",
@@ -643,8 +765,8 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
 
       data_input = ProcessingInput$new(
         input_name="dataset",
-        source=data_config.s3_data_input_path,
-        destination=self._CLARIFY_DATA_INPUT,
+        source=data_config$s3_data_input_path,
+        destination=private$.CLARIFY_DATA_INPUT,
         s3_data_type="S3Prefix",
         s3_input_mode="File",
         s3_data_distribution_type=data_config$s3_data_distribution_type,
@@ -666,3 +788,27 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
     }
   )
 )
+
+# Uploads the local analysis_config_file to the s3_output_path.
+# Args:
+#   analysis_config_file (str): File path to the local analysis config file.
+# s3_output_path (str): S3 prefix to store the analysis config file.
+# sagemaker_session (:class:`~sagemaker.session.Session`):
+#   Session object which manages interactions with Amazon SageMaker and
+# any other AWS services needed. If not specified, the processor creates
+# one using the default AWS configuration chain.
+# kms_key (str): The ARN of the KMS key that is used to encrypt the
+# user code file (default: None).
+# Returns:
+#   The S3 uri of the uploaded file.
+.upload_analysis_config = function(analysis_config_file,
+                                   s3_output_path,
+                                   sagemaker_session,
+                                   kms_key){
+  return(S3Uploader$new()$upload(
+    local_path=analysis_config_file,
+    desired_s3_uri=s3_output_path,
+    sagemaker_session=sagemaker_session,
+    kms_key=kms_key)
+  )
+}

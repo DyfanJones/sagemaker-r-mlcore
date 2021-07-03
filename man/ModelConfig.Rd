@@ -34,7 +34,10 @@ Initializes a configuration of a model and the endpoint to be created for it.
   instance_type,
   accept_type = NULL,
   content_type = NULL,
-  content_template = NULL
+  content_template = NULL,
+  custom_attributes = NULL,
+  accelerator_type = NULL,
+  endpoint_name_prefix = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -61,6 +64,23 @@ dataset instances. It is only used when "model_content_type" is
 "application/jsonlines". The template should have one and only one placeholder
 $features which will be replaced by a features list for to form the model inference
 input.}
+
+\item{\code{custom_attributes}}{(str): Provides additional information about a request for an
+inference submitted to a model hosted at an Amazon SageMaker endpoint. The
+information is an opaque value that is forwarded verbatim. You could use this
+value, for example, to provide an ID that you can use to track a request or to
+provide other metadata that a service endpoint was programmed to process. The value
+must consist of no more than 1024 visible US-ASCII characters as specified in
+Section 3.3.6. Field Value Components (
+\url{https://tools.ietf.org/html/rfc7230#section-3.2.6}) of the Hypertext Transfer
+Protocol (HTTP/1.1).}
+
+\item{\code{accelerator_type}}{(str): The Elastic Inference accelerator type to deploy to the model
+endpoint instance for making inferences to the model, see
+\url{https://docs.aws.amazon.com/sagemaker/latest/dg/ei.html}.}
+
+\item{\code{endpoint_name_prefix}}{(str): The endpoint name prefix of a new endpoint. Must follow
+pattern "^[a-zA-Z0-9](-\*[a-zA-Z0-9]".}
 }
 \if{html}{\out{</div>}}
 }
