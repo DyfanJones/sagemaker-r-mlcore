@@ -1501,8 +1501,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
 create_identical_dataset_and_algorithm_tuner = function(parent,
                                                         additional_parents=NULL,
                                                         sagemaker_session=NULL){
-  hp = HyperparameterTuner$new(
-    estimator=estimator, NULL, NULL)
+  hp = HyperparameterTuner$new(NULL, NULL, list("temp"))
   parent_tuner = hp$attach(
     tuning_job_name=parent, sagemaker_session=sagemaker_session
   )
@@ -1537,7 +1536,7 @@ create_transfer_learning_tuner = function(parent,
                                           estimator=NULL,
                                           sagemaker_session=NULL){
   hp = HyperparameterTuner$new(
-    estimator=estimator, NULL, NULL)
+    estimator=estimator, NULL, list("temp"))
   parent_tuner = hp$attach(
     tuning_job_name=parent, sagemaker_session=sagemaker_session
   )
