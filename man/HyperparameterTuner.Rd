@@ -50,7 +50,7 @@ for the ``HyperparameterTuner``.}
 \item \href{#method-transfer_learning_tuner}{\code{HyperparameterTuner$transfer_learning_tuner()}}
 \item \href{#method-identical_dataset_and_algorithm_tuner}{\code{HyperparameterTuner$identical_dataset_and_algorithm_tuner()}}
 \item \href{#method-create}{\code{HyperparameterTuner$create()}}
-\item \href{#method-.attach_estimator}{\code{HyperparameterTuner$.attach_estimator()}}
+\item \href{#method-.add_estimator}{\code{HyperparameterTuner$.add_estimator()}}
 \item \href{#method-format}{\code{HyperparameterTuner$format()}}
 \item \href{#method-clone}{\code{HyperparameterTuner$clone()}}
 }
@@ -157,6 +157,7 @@ Start a hyperparameter tuning job.
   job_name = NULL,
   include_cls_metadata = FALSE,
   estimator_kwargs = NULL,
+  wait = TRUE,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -213,6 +214,8 @@ training. Should be used only for tuners created via the factory method create()
 The keys are the estimator names for the estimator_dict argument of create()
 method. Each value is a dictionary for the other arguments needed for training
 of the corresponding estimator.}
+
+\item{\code{wait}}{(bool): Whether the call should wait until the job completes (default: ``TRUE``).}
 
 \item{\code{...}}{: Other arguments needed for training. Please refer to the
 ``fit()`` method of the associated estimator to see what other
@@ -701,14 +704,14 @@ sagemaker.tuner.HyperparameterTuner: a new ``HyperparameterTuner`` object that c
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-.attach_estimator"></a>}}
-\if{latex}{\out{\hypertarget{method-.attach_estimator}{}}}
-\subsection{Method \code{.attach_estimator()}}{
+\if{html}{\out{<a id="method-.add_estimator"></a>}}
+\if{latex}{\out{\hypertarget{method-.add_estimator}{}}}
+\subsection{Method \code{.add_estimator()}}{
 Add an estimator with corresponding objective metric name, parameter ranges and metric
              definitions (if applicable). This method is called by other functions and isn't required
              to be called directly
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{HyperparameterTuner$.attach_estimator(
+\if{html}{\out{<div class="r">}}\preformatted{HyperparameterTuner$.add_estimator(
   estimator_name,
   estimator,
   objective_metric_name,

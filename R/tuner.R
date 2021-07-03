@@ -3,13 +3,15 @@
 
 #' @include r_utils.R
 #' @include parameter.R
+#' @include amazon_hyperparameter.R
+#' @include amazon_estimator.R
 
 #' @import jsonlite
 #' @import lgr
 #' @import R6
 #' @import R6sagemaker.common
 
-AMAZON_ESTIMATOR_MODULE <- "R6sagemaker"
+AMAZON_ESTIMATOR_MODULE <- "R6sagemaker.mlcore"
 AMAZON_ESTIMATOR_CLS_NAMES <- list(
   "factorization-machines"= "FactorizationMachines",
   "kmeans"= "KMeans",
@@ -32,18 +34,10 @@ WARM_START_TYPE <- "WarmStartType"
 #'              * TransferLearning: Type of warm start that allows users to
 #'              reuse training results from existing tuning jobs that have similar algorithm
 #'              code and datasets.
-WarmStartTypes = R6Class("WarmStartTypes",
-  public = list(
-   #' @field IDENTICAL_DATA_AND_ALGORITHM
-   #' Type of warm start that allows users to reuse training results from existing tuning jobs
-   #' that have the same algorithm code
-   IDENTICAL_DATA_AND_ALGORITHM = "IdenticalDataAndAlgorithm",
-
-   #' @field TRANSFER_LEARNING
-   #' Type of warm start that allows users to
-   #' reuse training results from existing tuning jobs that have similar algorithm code
-   TRANSFER_LEARNING = "TransferLearning"
-  )
+WarmStartTypes = Enum(
+  IDENTICAL_DATA_AND_ALGORITHM = "IdenticalDataAndAlgorithm",
+  TRANSFER_LEARNING = "TransferLearning",
+  .class = "WarmStartTypes"
 )
 
 #' @title WarmStartConfig Class
@@ -78,10 +72,11 @@ WarmStartConfig = R6Class("WarmStartConfig",
                           parents = NULL){
       stopifnot(is.character(parents) || is.list(parents) || is.null(parents))
 
-      tryCatch({self$type = match.arg(warm_start_type)},
-               error = function(e){
-                 stop("Invalid type: `warm_start_config`, valid warm start types are: ",
-                      "'IdenticalDataAndAlgorithm', 'TransferLearning'", call. = F)})
+      tryCatch({
+        self$type = match.arg(warm_start_type)},
+        error = function(e){
+          ValueError$new("Invalid type: `warm_start_config`, valid warm start types are: ",
+                         "'IdenticalDataAndAlgorithm', 'TransferLearning'")})
       self$parents =  if(inherits(parents, "list")) unique(parents) else as.list(unique(parents))
     },
 
@@ -117,12 +112,10 @@ WarmStartConfig = R6Class("WarmStartConfig",
         stop(sprintf("Invalid parents: %s, parents should not be NULL",parents))
 
       cls = self$clone()
-      tryCatch({cls$type = match.arg(warm_start_config[[WARM_START_TYPE]], c("IdenticalDataAndAlgorithm", "TransferLearning"))},
-               error = function(e){
-                 stop("Invalid type: `WarmStartType`, valid warm start types are: ",
-                      "'IdenticalDataAndAlgorithm', 'TransferLearning'", call. = F)})
-      cls$parents =  if(inherits(parents, "list")) unique(parents) else as.list(unique(parents))
-
+      cls$initialize(
+        warm_start_type=warm_start_config[[WARM_START_TYPE]],
+        parents=parents
+      )
       return(cls)
     },
 
@@ -140,17 +133,21 @@ WarmStartConfig = R6Class("WarmStartConfig",
     #' @return list: Containing the "WarmStartType" and
     #'              "ParentHyperParameterTuningJobs" as the first class fields.
     to_input_req = function(){
-
-      output = list(unname(self$type),
-                    lapply(self$parents, function(parent) list(HyperParameterTuningJobName = parent)))
-
+      output = list(
+        self$type,
+        lapply(self$parents, function(parent) {
+          ll = list(parent)
+          names(ll) = HyperParameterTuningJobName
+          return(ll)
+        })
+      )
       names(output) = c(WARM_START_TYPE, PARENT_HYPERPARAMETER_TUNING_JOBS)
       return(output)
     },
 
     #' @description format class
     format = function(){
-      sprintf("<%s>", class(self)[1])
+      format_cls(self)
     }
   )
 )
@@ -245,7 +242,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
                           early_stopping_type=c("Off", "Auto"),
                           estimator_name=NULL){
       if (missing(hyperparameter_ranges) || length(hyperparameter_ranges) == 0)
-        stop("Need to specify hyperparameter ranges", call. = F)
+        ValueError$new("Need to specify hyperparameter ranges")
 
       if (!is.null(estimator_name)){
         self$estimator = NULL
@@ -262,7 +259,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
           self$metric_definitions_list = list(metric_definitions)
           names(self$metric_definitions_list) = estimator_name
         } else self$metric_definitions_list = list()
-        self.static_hyperparameters = NULL
+        self$static_hyperparameters = NULL
       } else {
         self$estimator = estimator
         self$objective_metric_name = objective_metric_name
@@ -339,15 +336,19 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     #' @param  ... : Other arguments needed for training. Please refer to the
     #'              ``fit()`` method of the associated estimator to see what other
     #'              arguments are needed.
+    #' @param wait (bool): Whether the call should wait until the job completes (default: ``TRUE``).
     fit = function(inputs=NULL,
                    job_name=NULL,
                    include_cls_metadata=FALSE,
                    estimator_kwargs=NULL,
+                   wait=TRUE,
                    ...){
       if (!is.null(self$estimator))
         private$.fit_with_estimator(inputs, job_name, include_cls_metadata, ...)
       else
         private$.fit_with_estimator_list(inputs, job_name, include_cls_metadata, estimator_kwargs)
+      if (wait)
+        self$wait()
     },
 
     #' @description Attach to an existing hyperparameter tuning job.
@@ -611,7 +612,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     #'              tuning job of this tuner. Analytics olbject gives you access to tuning
     #'              results summarized into a pandas dataframe.
     analytics = function(){
-      return(HyperparameterTuningJobAnalytics$new(self$latest_tuning_job.name, self$sagemaker_session))
+      return(HyperparameterTuningJobAnalytics$new(self$latest_tuning_job, self$sagemaker_session))
     },
 
     #' @description Creates a new ``HyperparameterTuner`` by copying the request fields
@@ -638,7 +639,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
                                        estimator=NULL){
       return (private$.create_warm_start_tuner(
         additional_parents=additional_parents,
-        warm_start_type=WarmStartTypes$new()$TRANSFER_LEARNING,
+        warm_start_type=WarmStartTypes$TRANSFER_LEARNING,
         estimator=estimator))
     },
 
@@ -661,7 +662,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     identical_dataset_and_algorithm_tuner = function(additional_parents=NULL){
       return(private$.create_warm_start_tuner(
         additional_parents=additional_parents,
-        warm_start_type=WarmStartTypes$new()$IDENTICAL_DATA_AND_ALGORITHM))
+        warm_start_type=WarmStartTypes$IDENTICAL_DATA_AND_ALGORITHM))
     },
 
     #' @description  Factory method to create a ``HyperparameterTuner`` instance. It takes one or more
@@ -737,11 +738,12 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         metric_definitions_list)
 
       estimator_names = sort(names(estimator_list))
-      first_estimator_name = estimator_names[1]
+      first_estimator_name = estimator_names[[1]]
 
-      metric_definitions = (if (!islistempty(metric_definitions_list))
-                                metric_definitions_list[[first_estimator_name]]
-                            else NULL)
+      metric_definitions = (
+        if (!islistempty(metric_definitions_list))
+          metric_definitions_list[[first_estimator_name]]
+        else NULL)
 
       tuner = self$clone()
       tuner$initialize(
@@ -760,9 +762,10 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         early_stopping_type=early_stopping_type)
 
       for (estimator_name in estimator_names[2:length(estimator_names)]){
-        metric_definitions = (if(!islistempty(metric_definitions_list))
-                                metric_definitions_list[[estimator_name]]
-                              else NULL)
+        metric_definitions = (
+          if(!islistempty(metric_definitions_list))
+            metric_definitions_list[[estimator_name]]
+          else NULL)
         tuner$.add_estimator(
           estimator_name=estimator_name,
           estimator=estimator_list[[estimator_name]],
@@ -798,7 +801,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     #'              extract the metric from the logs. This should be defined only
     #'              for hyperparameter tuning jobs that don't use an Amazon
     #'              algorithm.
-    .attach_estimator = function(estimator_name,
+    .add_estimator = function(estimator_name,
                                  estimator,
                                  objective_metric_name,
                                  hyperparameter_ranges,
@@ -812,7 +815,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
 
     #' @description format class
     format = function(){
-      sprintf("<%s>", class(self)[1])
+      format_class(self)
     }
   ),
   private = list(
@@ -832,7 +835,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         if (is.null(base_name)){
           estimator = self$estimator %||%  self$estimator_list[sort(names(self$estimator_list))[1]]
           base_name = base_name_from_image(estimator$training_image_uri())}
-        self$.current_job_name = name_from_base(base_name, max_length=self$TUNING_JOB_NAME_MAX_LENGTH, short=TRUE)
+        self$.current_job_name = name_from_base(
+          base_name, max_length=self$TUNING_JOB_NAME_MAX_LENGTH, short=TRUE)
       }
     },
 
@@ -841,8 +845,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       self$static_hyperparameters = NULL
       if (!is.null(self$estimator)){
         self$static_hyperparameters = private$.prepare_static_hyperparameters(
-          self$estimator, self$.hyperparameter_ranges, include_cls_metadata)}
-
+          self$estimator, self$.hyperparameter_ranges, include_cls_metadata)
+      }
       self$static_hyperparameters_list = NULL
       if (!islistempty(self$estimator_list)){
         self$static_hyperparameters_list = lapply(
@@ -852,20 +856,22 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
             private$.prepare_static_hyperparameters(
               estimator,
               self$.hyperparameter_ranges_list$estimator_name,
-              if(!inherits(include_cls_metadata, "logical")) include_cls_metadata$estimator_name else include_cls_metadata)
+              if(!inherits(include_cls_metadata, "logical"))
+                include_cls_metadata$estimator_name
+              else include_cls_metadata)
             }
           )
         names(self$static_hyperparameters_list) = names(self$estimator_list)
-        }
-      },
+      }
+    },
 
     # Prepare static hyperparameters for one estimator before tuning
     .prepare_static_hyperparameters = function(estimator, hyperparameter_ranges, include_cls_metadata){
       # Remove any hyperparameter that will be tuned
       static_hyperparameters = lapply(estimator$hyperparameters(), as.character)
       for (hyperparameter_name in names(hyperparameter_ranges)){
-        static_hyperparameters[hyperparameter_name] = NULL}
-
+        static_hyperparameters[hyperparameter_name] = NULL
+      }
       # For attach() to know what estimator to use for frameworks
       # (other algorithms may not accept extra hyperparameters)
       if (isTRUE(include_cls_metadata) || inherits(estimator, "Framework")){
@@ -928,29 +934,29 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     .prepare_estimator_cls = function(estimator_cls,
                                       training_details){
       if (!is.null(estimator_cls)){
-        return(eval(parse(text = estimator_cls)[1]))}
+        ll = rsplit(estimator_cls, "::", 1)
+        names(ll) = c("module", "cls_name")
+        return(pkg_method(ll$cls_name, ll$module))}
 
       # Then check for estimator class in hyperparameters
       hyperparameters = training_details$StaticHyperParameters
-      if (self$SAGEMAKER_ESTIMATOR_CLASS_NAME %in% hyperparameters
-          # TODO: need to set up metadata to map Python modules to R
-          # && self$SAGEMAKER_ESTIMATOR_MODULE %in% hyperparameters
+      if (self$SAGEMAKER_ESTIMATOR_CLASS_NAME %in% names(hyperparameters)
+          && self$SAGEMAKER_ESTIMATOR_MODULE %in% names(hyperparameters)
           ){
         module = hyperparameters[[self$SAGEMAKER_ESTIMATOR_MODULE]]
         cls_name = hyperparameters[[self$SAGEMAKER_ESTIMATOR_CLASS_NAME]]
-        return(eval(parse(text = cls_name)[1]))}
+        return(get(cls_name))}
 
       # Then try to derive the estimator from the image name for 1P algorithms
-      image_name = training_details$AlgorithmSpecification$TrainingImage
+      image_uri = training_details$AlgorithmSpecification$TrainingImage
       pos <- regexpr("/", image_name, perl=TRUE) + 1
       algorithm = substr(image_name, pos+1, nchar(image_name))
       if (algorithm %in% AMAZON_ESTIMATOR_CLS_NAMES){
         cls_name = AMAZON_ESTIMATOR_CLS_NAMES[[algorithm]]
-        return(eval(parse(text = paste(AMAZON_ESTIMATOR_MODULE, cls_name, sep = "::")[1])))}
+        return(pkg_method(cls_name, AMAZON_ESTIMATOR_MODULE))}
 
       # Default to the BYO estimator
-      return(eval(parse(text = paste(self$DEFAULT_ESTIMATOR_MODULE,
-                                     self$DEFAULT_ESTIMATOR_CLS_NAME, sep = "::")[1])))
+      return(pkg_method(self$DEFAULT_ESTIMATOR_CLS_NAME, self$DEFAULT_ESTIMATOR_MODULE))
     },
 
     .prepare_estimator_from_job_description = function(estimator_cls,
@@ -969,8 +975,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       if (IsSubR6Class(estimator_cls, "AmazonAlgorithmEstimatorBase")){
         additional_hyperparameters = private$.extract_hyperparameters_from_parameter_ranges(
           parameter_ranges)
-        training_details[["HyperParameters"]] = c(training_details[["HyperParameters"]], additional_hyperparameters)}
-
+        training_details[["HyperParameters"]] = c(training_details[["HyperParameters"]], additional_hyperparameters)
+      }
       # Add items expected by the estimator (but aren't needed otherwise)
       training_details$TrainingJobName = ""
       if (!("KmsKeyId" %in% names(training_details$OutputDataConfig)))
@@ -994,8 +1000,9 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         "max_parallel_jobs"= tuning_config$ResourceLimits$MaxParallelTrainingJobs,
         "warm_start_config"= WarmStartConfig$new()$from_job_desc(
           job_details$WarmStartConfig),
-        "early_stopping_type"= tuning_config$TrainingJobEarlyStoppingType)
-
+        "early_stopping_type"= tuning_config$TrainingJobEarlyStoppingType,
+        "base_tuning_job_name"=base_from_name(job_details[["HyperParameterTuningJobName"]])
+      )
       params$objective_metric_name = tuning_config$HyperParameterTuningJobObjectiveMetricName
       params$objective_type = tuning_config$HyperParameterTuningJobObjective$Type
 
@@ -1060,7 +1067,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
             else
               tuning_range = parameter$as_tuning_range(parameter_name)
             hp_ranges = c(hp_ranges, list(tuning_range))}
-        processed_parameter_ranges[[paste0(range_type, "ParameterRanges")]] = hp_ranges
+          processed_parameter_ranges[[paste0(range_type, "ParameterRanges")]] = hp_ranges
         }
       }
       return(processed_parameter_ranges)
@@ -1191,7 +1198,6 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
 
     .validate_parameter_range = function(value_hp,
                                          parameter_range){
-      # TODO: method to validate hyperparameters
       for (i in seq_along(parameter_range)){
         if (names(parameter_range[i]) == "scaling_type")
           next
@@ -1201,8 +1207,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
           for (categorical_value in parameter_range[[i]])
             value_hp$validate(categorical_value)
           # Continuous, Integer ranges
-        } else
-          value_hp$validate(param_range)
+        } else {
+          value_hp$validate(param_range)}
       }
     },
 
@@ -1242,16 +1248,16 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       }
 
       if (length(self$estimator_list) > 1)
-        stop("Warm start is not supported currently for tuners with multiple estimators")
+        ValueError$new(
+          "Warm start is not supported currently for tuners with multiple estimators")
 
       if (is.null(estimator)){
         estimator_name = names(self$estimator_list)[[1]]
         estimator_list = list(estimator)
         names(estimator_list) = estimator_name
       } else{
-        estimator_list = self$estimator_list}
-
-
+        estimator_list = self$estimator_list
+      }
       return (self$create(
         estimator_list=estimator_list,
         objective_metric_name_list=self$objective_metric_name_list,
@@ -1278,24 +1284,27 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         name="objective_metric_name_dict",
         value=objective_metric_name_list,
         allowed_keys=estimator_names,
-        require_same_keys=TRUE)
+        require_same_keys=TRUE
+      )
       private$.validate_list_argument(
         name="hyperparameter_ranges_dict",
         value=hyperparameter_ranges_list,
         allowed_keys=estimator_names,
-        require_same_keys=TRUE)
+        require_same_keys=TRUE
+      )
       private$.validate_list_argument(
         name="metric_definitions_dict",
         value=metric_definitions_list,
-        allowed_keys=estimator_names)
+        allowed_keys=estimator_names
+      )
     },
 
     # Validate ``estimator_dict`` in inputs for ``HyperparameterTuner.create()``
     .validate_estimator_list = function(estimatorlist){
       if (islistempty(estimator_list))
-        stop("At least one estimator should be provided", call.=F)
+        ValueError$new("At least one estimator should be provided")
       if (NULL %in% names(estimator_list))
-        stop("Estimator names cannot be None", call. = F)
+        ValueError$new("Estimator names cannot be None")
     },
 
     # Check if an argument is an dictionary with correct key set
@@ -1307,18 +1316,21 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         return(NULL)
 
       if (!inherits(value, list))
-        stop(sprintf("Argument '%s' must be a dictionary using %s as keys", name, allowed_keys), call. = F)
-
+        ValueError$new(sprintf(
+          "Argument '%s' must be a dictionary using %s as keys", name, allowed_keys)
+        )
       value_keys = sort(names(value))
 
       if (require_same_keys){
         if (value_keys != allowed_keys)
-          stop(sprintf("The keys of argument '%s' must be the same as %s", name, allowed_keys),
-               call. = F)
+          ValueError$new(sprintf(
+            "The keys of argument '%s' must be the same as %s", name, allowed_keys)
+          )
       } else {
         if (!any(value_keys %in% allowed_keys))
-        stop(sprintf("The keys of argument '%s' must be a subset of %s", name, allowed_keys),
-             call. = F)
+          ValueError$new(sprintf(
+            "The keys of argument '%s' must be a subset of %s", name, allowed_keys)
+          )
       }
     },
 
@@ -1468,3 +1480,68 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
   lock_objects = F
 )
 
+#' @title Creates a new tuner with an identical dataset and algorithm.
+#' @description It does this identical creation by copying the request fields from the
+#'              provided parent to the new instance of ``HyperparameterTuner`` followed
+#'              by addition of warm start configuration with the type as
+#'              "IdenticalDataAndAlgorithm" and ``parents`` as the union of provided list
+#'              of ``additional_parents`` and the ``parent``.
+#' @param parent (str): Primary parent tuning job's name from which the Tuner and
+#'              Estimator configuration has to be copied
+#' @param additional_parents (set{str}): Set of additional parent tuning job's
+#'              names along with the primary parent tuning job name to be used in
+#'              warm starting the transfer learning tuner.
+#' @param sagemaker_session (sagemaker.session.Session): Session object which
+#'              manages interactions with Amazon SageMaker APIs and any other AWS
+#'              services needed. If not specified, one is created using the default
+#'              AWS configuration chain.
+#' @return sagemaker.tuner.HyperparameterTuner: a new ``HyperparameterTuner``
+#'              object for the warm-started hyperparameter tuning job
+#' @export
+create_identical_dataset_and_algorithm_tuner = function(parent,
+                                                        additional_parents=NULL,
+                                                        sagemaker_session=NULL){
+  hp = HyperparameterTuner$new(
+    estimator=estimator, NULL, NULL)
+  parent_tuner = hp$attach(
+    tuning_job_name=parent, sagemaker_session=sagemaker_session
+  )
+  return(parent_tuner$identical_dataset_and_algorithm_tuner(
+    additional_parents=additional_parents)
+  )
+}
+
+#' @title Creates a new ``HyperParameterTuner`` instance from the parent.
+#' @description It creates the new tuner by copying the request fields from the provided
+#'              parent to the new instance of ``HyperparameterTuner`` followed by addition
+#'              of warm start configuration with the type as "TransferLearning" and
+#'              ``parents`` as the union of provided list of ``additional_parents`` and
+#'              the ``parent``.
+#' @param parent (str): Primary parent tuning job's name from which the Tuner and
+#'              Estimator configuration has to be copied
+#' @param additional_parents (set{str}): Set of additional parent tuning job's
+#'              names along with the primary parent tuning job name to be used in
+#'              warm starting the identical dataset and algorithm tuner.
+#' @param estimator (sagemaker.estimator.EstimatorBase): An estimator object that
+#'              has been initialized with the desired configuration. There does not
+#'              need to be a training job associated with this instance.
+#' @param sagemaker_session (sagemaker.session.Session): Session object which
+#'              manages interactions with Amazon SageMaker APIs and any other AWS
+#'              services needed. If not specified, one is created using the default
+#'              AWS configuration chain.
+#' @return sagemaker.tuner.HyperparameterTuner: New instance of warm started
+#'              HyperparameterTuner
+#' @export
+create_transfer_learning_tuner = function(parent,
+                                          additional_parents=NULL,
+                                          estimator=NULL,
+                                          sagemaker_session=NULL){
+  hp = HyperparameterTuner$new(
+    estimator=estimator, NULL, NULL)
+  parent_tuner = hp$attach(
+    tuning_job_name=parent, sagemaker_session=sagemaker_session
+  )
+  return(parent_tuner$transfer_learning_tuner(
+    additional_parents=additional_parents, estimator=estimator)
+  )
+}
