@@ -59,5 +59,6 @@ Collate:
     'model_monitor_dataset_format.R'
     'model_monitor_monitoring_files.R'
     'multidatamodel.R'
+    'pipeline.R'
     'tuner.R'
     'zzz.R'
