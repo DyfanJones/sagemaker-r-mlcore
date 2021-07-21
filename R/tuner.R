@@ -1347,9 +1347,21 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     #   sagemaker.tuner._TuningJob: Constructed object that captures all
     # information about the started job.
     start_new = function(inputs){
+      tuner_args = private$.get_tuner_args(inputs)
 
-      LOGGER$info("_TuningJob.start_new!!!")
+      .invoke(self$sagemaker_session$create_tuning_job, tuner_args)
+      return(self$.current_job_name)
+    },
 
+    # Gets a dict of arguments for a new Amazon SageMaker tuning job from the tuner
+    # Args:
+    #   tuner (:class:`~sagemaker.tuner.HyperparameterTuner`):
+    #   The ``HyperparameterTuner`` instance that started the job.
+    # inputs: Information about the training data. Please refer to the
+    # ``fit()`` method of the associated estimator.
+    # Returns:
+    #   Dict: dict for `sagemaker.session.Session.tune` method
+    .get_tuner_args = function(inputs){
       warm_start_config_req = NULL
       if (!is.null(self$warm_start_config))
         warm_start_config_req = self$warm_start_config$to_input_req()
@@ -1384,20 +1396,19 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       if (!islistempty(self$estimator_list))
         tuner_args$training_config_list=lapply(
           sort(names(self$estimator_list)),
-               function(estimator_name) {
-                 private$.prepare_training_config(
-                   if (!islistempty(inputs)) inputs$estimator_name else NULL,
-                   self$estimator_list[[estimator_name]],
-                   self$static_hyperparameters_list[[estimator_name]],
-                   self$metric_definitions_list$estimator_name,
-                   estimator_name,
-                   self$objective_type,
-                   self$objective_metric_name_list[[estimator_name]],
-                   self$hyperparameter_ranges_list()[[estimator_name]])
-               })
+          function(estimator_name) {
+            private$.prepare_training_config(
+              if (!islistempty(inputs)) inputs$estimator_name else NULL,
+              self$estimator_list[[estimator_name]],
+              self$static_hyperparameters_list[[estimator_name]],
+              self$metric_definitions_list[[estimator_name]],
+              estimator_name,
+              self$objective_type,
+              self$objective_metric_name_list[[estimator_name]],
+              self$hyperparameter_ranges_list()[[estimator_name]])
+          })
 
-      do.call(self$sagemaker_session$create_tuning_job, tuner_args)
-      return(self$.current_job_name)
+      return(tuner_args)
     },
 
     # Prepare training config for one estimator
