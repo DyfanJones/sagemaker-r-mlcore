@@ -6,6 +6,9 @@
 \description{
 Make prediction requests to an Amazon SageMaker endpoint.
 }
+\section{Super class}{
+\code{\link[R6sagemaker.mlcore:PredictorBase]{R6sagemaker.mlcore::PredictorBase}} -> \code{Predictor}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -37,6 +40,7 @@ Make prediction requests to an Amazon SageMaker endpoint.
 \item \href{#method-predict}{\code{Predictor$predict()}}
 \item \href{#method-update_endpoint}{\code{Predictor$update_endpoint()}}
 \item \href{#method-delete_endpoint}{\code{Predictor$delete_endpoint()}}
+\item \href{#method-delete_predictor}{\code{Predictor$delete_predictor()}}
 \item \href{#method-delete_model}{\code{Predictor$delete_model()}}
 \item \href{#method-enable_data_capture}{\code{Predictor$enable_data_capture()}}
 \item \href{#method-disable_data_capture}{\code{Predictor$disable_data_capture()}}
@@ -46,6 +50,12 @@ Make prediction requests to an Amazon SageMaker endpoint.
 \item \href{#method-format}{\code{Predictor$format()}}
 \item \href{#method-clone}{\code{Predictor$clone()}}
 }
+}
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+}
+\out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
@@ -216,6 +226,28 @@ Delete the Amazon SageMaker endpoint backing this predictor. Also
              delete_endpoint_config is True.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Predictor$delete_endpoint(delete_endpoint_config = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{delete_endpoint_config}}{(bool, optional): Flag to indicate whether to
+delete endpoint configuration together with endpoint. Defaults
+to True. If True, both endpoint and endpoint configuration will
+be deleted. If False, only endpoint will be deleted.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-delete_predictor"></a>}}
+\if{latex}{\out{\hypertarget{method-delete_predictor}{}}}
+\subsection{Method \code{delete_predictor()}}{
+Delete the Amazon SageMaker endpoint backing this predictor. Also
+             delete the endpoint configuration attached to it if
+             delete_endpoint_config is True.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Predictor$delete_predictor(delete_endpoint_config = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
