@@ -11,10 +11,45 @@
 #' @import R6sagemaker.common
 #' @import utils
 
+#' @title PredictorBase Class
+#' @description An object that encapsulates a deployed model
+#' @keywords internal
+#' @export
+PredictorBase = R6Class("PredictorBase",
+  public = list(
+
+    #' @description Perform inference on the provided data and return a prediction.
+    #' @param ... : not implemented
+    predict = function(...){
+      NotImplementedError$new()
+    },
+
+    #' @description Destroy resources associated with this predictor.
+    #' @param ... : not implemented
+    delete_predictor = function(...){
+      NotImplementedError$new()
+    }
+  ),
+  active = list(
+    #' @field content_type
+    #' The MIME type of the data sent to the inference server.
+    content_type = function(){
+      NotImplementedError$new()
+    },
+
+    #' @field accept
+    #' The content type(s) that are expected from the inference server.
+    accept = function(){
+      NotImplementedError$new()
+    }
+  )
+)
+
 #' @title Predictor Class
 #' @description Make prediction requests to an Amazon SageMaker endpoint.
 #' @export
 Predictor = R6Class("Predictor",
+  inherit = PredictorBase,
   public = list(
 
     #' @field endpoint_name
@@ -209,6 +244,17 @@ Predictor = R6Class("Predictor",
         private$.delete_endpoint_config()
 
       self$sagemaker_session$delete_endpoint(self$endpoint_name)
+    },
+
+    #' @description Delete the Amazon SageMaker endpoint backing this predictor. Also
+    #'              delete the endpoint configuration attached to it if
+    #'              delete_endpoint_config is True.
+    #' @param delete_endpoint_config (bool, optional): Flag to indicate whether to
+    #'              delete endpoint configuration together with endpoint. Defaults
+    #'              to True. If True, both endpoint and endpoint configuration will
+    #'              be deleted. If False, only endpoint will be deleted.
+    delete_predictor = function(delete_endpoint_config=TRUE) {
+      return(self$delete_endpoint(delete_endpoint_config))
     },
 
     #' @description Deletes the Amazon SageMaker models backing this predictor.
