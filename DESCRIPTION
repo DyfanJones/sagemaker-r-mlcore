@@ -60,5 +60,7 @@ Collate:
     'model_monitor_monitoring_files.R'
     'multidatamodel.R'
     'pipeline.R'
+    'serverless_predictor.R'
+    'serverless_model.R'
     'tuner.R'
     'zzz.R'
