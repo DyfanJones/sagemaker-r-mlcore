@@ -60,10 +60,17 @@ ParameterRange = R6Class("ParameterRange",
     #' @return dict[str, str]: A dictionary that contains the name and values of
     #'              the hyperparameter.
     as_tuning_range = function(name){
-      return (list("Name"= name,
-                   "MinValue"= as.character(self$min_value),
-                   "MaxValue" = as.character(self$max_value),
-                   "ScalingType"= self$scaling_type))
+      return (list(
+        "Name"= name,
+        "MinValue"= (if(!inherits(self$min_value, "PipelineParameter"))
+          as.character(self$min_value)
+          else self$min_value),
+        "MaxValue" = (if(!inherits(self.max_value, "PipelineParameter"))
+          as.character(self$max_value)
+          else self$max_value),
+        "ScalingType"= self$scaling_type,
+        )
+      )
     },
 
     #' @description format class
@@ -126,9 +133,11 @@ CategoricalParameter = R6Class("CategoricalParameter",
    #'              This input will be converted into a list of strings.
    initialize = function(values){
      if (inherits(values, "list"))
-       self$values = values
+       self$values = lapply(values, function(v){(if(!inherits(v, "PipelineParameter")) as.character(v)
+         else v)})
      else
-       self$values = as.list(values)
+       self$values = as.list((if(!inherits(values, "PipelineParameter"))
+         as.character(values) else values))
    },
 
    #' @description Represent the parameter range as a dicionary suitable for a request

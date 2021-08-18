@@ -1460,8 +1460,11 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       if (!is.null(parameter_ranges))
         training_config$parameter_ranges = parameter_ranges
 
+      if (!is.null(estimator$max_retry_attempts))
+        training_config$max_retry_attempts = estimator$max_retry_attempts
+
       return(training_config)
-      },
+    },
 
     stop = function(){
       self$sagemaker_session$stop_tuning_job(name=self$latest_tuning_job)
