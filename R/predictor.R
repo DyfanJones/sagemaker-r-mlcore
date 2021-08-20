@@ -6,7 +6,6 @@
 #' @include serializers.R
 #' @include deserializers.R
 
-#' @import paws
 #' @import R6
 #' @import R6sagemaker.common
 #' @import utils
