@@ -257,7 +257,7 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
                       predictor_cls=predictor_cls,
                       ...)
 
-          return(.invoke(R6sagemaker.common::ModelPackage$new, param))
+          return(do.call(R6sagemaker.common::ModelPackage$new, param))
      },
 
      #' @description Return a ``Transformer`` that uses a SageMaker Model based on the

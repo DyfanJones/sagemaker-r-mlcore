@@ -516,7 +516,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
                     data_capture_config=data_capture_config,
                     ...)
 
-      return(.invoke(best_estimator$deploy, params))
+      return(do.call(best_estimator$deploy, params))
     },
 
 
@@ -1349,7 +1349,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     start_new = function(inputs){
       tuner_args = private$.get_tuner_args(inputs)
 
-      .invoke(self$sagemaker_session$create_tuning_job, tuner_args)
+      do.call(self$sagemaker_session$create_tuning_job, tuner_args)
       return(self$.current_job_name)
     },
 

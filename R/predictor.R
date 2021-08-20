@@ -140,7 +140,7 @@ Predictor = R6Class("Predictor",
       request_args = private$.create_request_args(
         data, initial_args, target_model, target_variant, inference_id)
 
-      response = .invoke(self$sagemaker_session$sagemaker_runtime$invoke_endpoint,
+      response = do.call(self$sagemaker_session$sagemaker_runtime$invoke_endpoint,
                          request_args)
 
       return(private$.handle_response(response))
