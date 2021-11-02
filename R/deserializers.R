@@ -104,7 +104,7 @@ BytesDeserializer = R6Class("BytesDeserializer",
     #' @param stream (botocore.response.StreamingBody): A stream of bytes.
     #' @param content_type (str): The MIME type of the data.
     #' @return bytes: The bytes object read from the stream.
-    deserializer = function(stream, content_type){
+    deserialize = function(stream, content_type){
       return(stream)
     }
   )
