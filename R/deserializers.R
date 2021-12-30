@@ -29,9 +29,7 @@ BaseDeserializer = R6Class("BaseDeserializer",
 
     #' @field ACCEPT
     #' The content types that are expected from the inference endpoint.
-    ACCEPT = function(){},
-
-    help = function(){sagemaker.common:::cls_help(self, environment())}
+    ACCEPT = function(){}
   )
 )
 

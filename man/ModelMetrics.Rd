@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_metrics.R
 \name{ModelMetrics}
 \alias{ModelMetrics}
-\title{ModelMetrics Class}
+\title{ModelMetrics class}
 \description{
 Accepts model metrics parameters for conversion to request dict.
 }
@@ -27,24 +27,38 @@ Initialize a ``ModelMetrics`` instance and turn parameters into dict.
   model_data_statistics = NULL,
   model_data_constraints = NULL,
   bias = NULL,
-  explainability = NULL
+  explainability = NULL,
+  bias_pre_training = NULL,
+  bias_post_training = NULL
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{model_statistics}}{(MetricsSource):}
+\item{\code{model_statistics}}{(MetricsSource): A metric source object that represents
+model statistics (default: None).}
 
-\item{\code{model_constraints}}{(MetricsSource):}
+\item{\code{model_constraints}}{(MetricsSource): A metric source object that represents
+model constraints (default: None).}
 
-\item{\code{model_data_statistics}}{(MetricsSource):}
+\item{\code{model_data_statistics}}{(MetricsSource): A metric source object that represents
+model data statistics (default: None).}
 
-\item{\code{model_data_constraints}}{(MetricsSource):}
+\item{\code{model_data_constraints}}{(MetricsSource): A metric source object that represents
+model data constraints (default: None).}
 
-\item{\code{bias}}{(MetricsSource):}
+\item{\code{bias}}{(MetricsSource): A metric source object that represents bias report
+(default: None).}
 
-\item{\code{explainability}}{(MetricsSource):}
+\item{\code{explainability}}{(MetricsSource): A metric source object that represents
+explainability report (default: None).}
+
+\item{\code{bias_pre_training}}{(MetricsSource): A metric source object that represents
+Pre-training report (default: None).}
+
+\item{\code{bias_post_training}}{(MetricsSource): A metric source object that represents
+Post-training report (default: None).}
 }
 \if{html}{\out{</div>}}
 }
