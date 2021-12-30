@@ -7,7 +7,7 @@
 Provides functionality to retrieve baseline-specific files output from baselining job.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.common:.Job]{R6sagemaker.common::.Job}} -> \code{\link[R6sagemaker.common:ProcessingJob]{R6sagemaker.common::ProcessingJob}} -> \code{BaseliningJob}
+\code{\link[sagemaker.common:.Job]{sagemaker.common::.Job}} -> \code{\link[sagemaker.common:ProcessingJob]{sagemaker.common::ProcessingJob}} -> \code{BaseliningJob}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -22,17 +22,17 @@ Provides functionality to retrieve baseline-specific files output from baselinin
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic=".Job" data-id="format">}\href{../../R6sagemaker.common/html/.Job.html#method-format}{\code{R6sagemaker.common::.Job$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="describe">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-describe}{\code{R6sagemaker.common::ProcessingJob$describe()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="from_processing_arn">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-from_processing_arn}{\code{R6sagemaker.common::ProcessingJob$from_processing_arn()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="from_processing_name">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-from_processing_name}{\code{R6sagemaker.common::ProcessingJob$from_processing_name()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="prepare_app_specification">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-prepare_app_specification}{\code{R6sagemaker.common::ProcessingJob$prepare_app_specification()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="prepare_output_config">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-prepare_output_config}{\code{R6sagemaker.common::ProcessingJob$prepare_output_config()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="prepare_processing_resources">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-prepare_processing_resources}{\code{R6sagemaker.common::ProcessingJob$prepare_processing_resources()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="prepare_stopping_condition">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-prepare_stopping_condition}{\code{R6sagemaker.common::ProcessingJob$prepare_stopping_condition()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="start_new">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-start_new}{\code{R6sagemaker.common::ProcessingJob$start_new()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="stop">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-stop}{\code{R6sagemaker.common::ProcessingJob$stop()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="ProcessingJob" data-id="wait">}\href{../../R6sagemaker.common/html/ProcessingJob.html#method-wait}{\code{R6sagemaker.common::ProcessingJob$wait()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic=".Job" data-id="format">}\href{../../sagemaker.common/html/.Job.html#method-format}{\code{sagemaker.common::.Job$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="describe">}\href{../../sagemaker.common/html/ProcessingJob.html#method-describe}{\code{sagemaker.common::ProcessingJob$describe()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="from_processing_arn">}\href{../../sagemaker.common/html/ProcessingJob.html#method-from_processing_arn}{\code{sagemaker.common::ProcessingJob$from_processing_arn()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="from_processing_name">}\href{../../sagemaker.common/html/ProcessingJob.html#method-from_processing_name}{\code{sagemaker.common::ProcessingJob$from_processing_name()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="prepare_app_specification">}\href{../../sagemaker.common/html/ProcessingJob.html#method-prepare_app_specification}{\code{sagemaker.common::ProcessingJob$prepare_app_specification()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="prepare_output_config">}\href{../../sagemaker.common/html/ProcessingJob.html#method-prepare_output_config}{\code{sagemaker.common::ProcessingJob$prepare_output_config()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="prepare_processing_resources">}\href{../../sagemaker.common/html/ProcessingJob.html#method-prepare_processing_resources}{\code{sagemaker.common::ProcessingJob$prepare_processing_resources()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="prepare_stopping_condition">}\href{../../sagemaker.common/html/ProcessingJob.html#method-prepare_stopping_condition}{\code{sagemaker.common::ProcessingJob$prepare_stopping_condition()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="start_new">}\href{../../sagemaker.common/html/ProcessingJob.html#method-start_new}{\code{sagemaker.common::ProcessingJob$start_new()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="stop">}\href{../../sagemaker.common/html/ProcessingJob.html#method-stop}{\code{sagemaker.common::ProcessingJob$stop()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ProcessingJob" data-id="wait">}\href{../../sagemaker.common/html/ProcessingJob.html#method-wait}{\code{sagemaker.common::ProcessingJob$wait()}}\out{</span>}
 }
 \out{</details>}
 }

@@ -7,7 +7,7 @@
 Serialize data to a JSON formatted string.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:BaseSerializer]{R6sagemaker.mlcore::BaseSerializer}} -> \code{\link[R6sagemaker.mlcore:SimpleBaseSerializer]{R6sagemaker.mlcore::SimpleBaseSerializer}} -> \code{JSONSerializer}
+\code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{JSONSerializer}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -19,8 +19,8 @@ Serialize data to a JSON formatted string.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{R6sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="SimpleBaseSerializer" data-id="initialize">}\href{../../R6sagemaker.mlcore/html/SimpleBaseSerializer.html#method-initialize}{\code{R6sagemaker.mlcore::SimpleBaseSerializer$initialize()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="SimpleBaseSerializer" data-id="initialize">}\href{../../sagemaker.mlcore/html/SimpleBaseSerializer.html#method-initialize}{\code{sagemaker.mlcore::SimpleBaseSerializer$initialize()}}\out{</span>}
 }
 \out{</details>}
 }

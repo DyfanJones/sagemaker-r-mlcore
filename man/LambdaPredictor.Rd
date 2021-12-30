@@ -7,7 +7,7 @@
 A deployed model hosted on Lambda.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:PredictorBase]{R6sagemaker.mlcore::PredictorBase}} -> \code{LambdaPredictor}
+\code{\link[sagemaker.mlcore:PredictorBase]{sagemaker.mlcore::PredictorBase}} -> \code{LambdaPredictor}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

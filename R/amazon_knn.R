@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title An index-based algorithm. It uses a non-parametric method for classification or regression.
 #' @description For classification problems, the algorithm queries the k points that are closest to the sample
@@ -305,7 +305,7 @@ KNNPredictor = R6Class("KNNPredictor",
 #'              creates an Endpoint and returns :class:`KNNPredictor`.
 #' @export
 KNNModel = R6Class("KNNModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public= list(
 
     #' @description Initialize KNNModel Class

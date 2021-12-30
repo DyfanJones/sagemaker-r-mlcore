@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title ModelMetrics Class
 #' @description Accepts model metrics parameters for conversion to request dict.

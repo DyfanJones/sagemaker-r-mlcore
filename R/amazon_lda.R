@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 
 #' @title An unsupervised learning algorithm attempting to describe data as distinct categories.
@@ -250,7 +250,7 @@ LDAPredictor = R6Class("LDAPredictor",
 #'              Predictor that transforms vectors to a lower-dimensional representation.
 #' @export
 LDAModel = R6Class("LDAModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize LDAModel class

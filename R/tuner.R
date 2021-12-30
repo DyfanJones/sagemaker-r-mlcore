@@ -9,9 +9,9 @@
 #' @import jsonlite
 #' @import lgr
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
-AMAZON_ESTIMATOR_MODULE <- "R6sagemaker.mlcore"
+AMAZON_ESTIMATOR_MODULE <- "sagemaker.mlcore"
 AMAZON_ESTIMATOR_CLS_NAMES <- list(
   "factorization-machines"= "FactorizationMachines",
   "kmeans"= "KMeans",
@@ -172,7 +172,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
 
     #' @field DEFAULT_ESTIMATOR_MODULE
     #' Class metadata
-    DEFAULT_ESTIMATOR_MODULE = "R6sagemaker",
+    DEFAULT_ESTIMATOR_MODULE = "sagemaker",
 
     #' @field DEFAULT_ESTIMATOR_CLS_NAME
     #' Class metadata

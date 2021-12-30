@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 
 #' @title An unsupervised machine learning algorithm to reduce feature dimensionality.
@@ -249,7 +249,7 @@ PCAPredictor = R6Class("PCAPredictor",
 #'              Predictor that transforms vectors to a lower-dimensional representation.
 #' @export
 PCAModel = R6Class("PCAModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description initialize PCAModel Class

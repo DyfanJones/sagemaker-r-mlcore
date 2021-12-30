@@ -49,7 +49,7 @@ sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("
 sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
 
 test_that("test init required positional", {
-  object2vec = Object2Vec$new(
+  object2vec = sagemaker.mlcore::Object2Vec$new(
     ROLE,
     INSTANCE_COUNT,
     INSTANCE_TYPE,

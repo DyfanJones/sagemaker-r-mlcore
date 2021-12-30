@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title A supervised learning algorithms used for solving classification or regression problems.
 #' @description For input, you give the model labeled examples (x, y). x is a high-dimensional vector and
@@ -839,7 +839,7 @@ LinearLearnerPredictor = R6Class("LinearLearnerPredictor",
 #'              :class:`LinearLearnerPredictor`
 #' @export
 LinearLearnerModel = R6Class("LinearLearnerModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize LinearLearnerModel class

@@ -9,7 +9,7 @@ This class extends the API of :class:~`sagemaker.serializers.BaseSerializer` wit
              provided at init and freely updated.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:BaseSerializer]{R6sagemaker.mlcore::BaseSerializer}} -> \code{SimpleBaseSerializer}
+\code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{SimpleBaseSerializer}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -36,7 +36,7 @@ This class extends the API of :class:~`sagemaker.serializers.BaseSerializer` wit
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{R6sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
 }
 \out{</details>}
 }

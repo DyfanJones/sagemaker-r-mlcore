@@ -9,7 +9,7 @@ This class extends the API of :class:~`sagemaker.deserializers.BaseDeserializer`
              provided at init and freely updated.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:BaseDeserializer]{R6sagemaker.mlcore::BaseDeserializer}} -> \code{SimpleBaseDeserializer}
+\code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{SimpleBaseDeserializer}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -35,8 +35,8 @@ This class extends the API of :class:~`sagemaker.deserializers.BaseDeserializer`
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="deserialize">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-deserialize}{\code{R6sagemaker.mlcore::BaseDeserializer$deserialize()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{R6sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseDeserializer" data-id="deserialize">}\href{../../sagemaker.mlcore/html/BaseDeserializer.html#method-deserialize}{\code{sagemaker.mlcore::BaseDeserializer$deserialize()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
 }
 \out{</details>}
 }

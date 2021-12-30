@@ -9,7 +9,7 @@ Serialize data of various formats to a numpy npy file format.
              R objects through the use of the `reticualte` package.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:BaseSerializer]{R6sagemaker.mlcore::BaseSerializer}} -> \code{\link[R6sagemaker.mlcore:SimpleBaseSerializer]{R6sagemaker.mlcore::SimpleBaseSerializer}} -> \code{NumpySerializer}
+\code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{NumpySerializer}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -31,7 +31,7 @@ Serialize data of various formats to a numpy npy file format.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{R6sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseSerializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseSerializer.html#method-format}{\code{sagemaker.mlcore::BaseSerializer$format()}}\out{</span>}
 }
 \out{</details>}
 }

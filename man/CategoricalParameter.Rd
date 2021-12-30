@@ -8,7 +8,7 @@ A class for representing hyperparameters that have a discrete list of
              possible values.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:ParameterRange]{R6sagemaker.mlcore::ParameterRange}} -> \code{CategoricalParameter}
+\code{\link[sagemaker.mlcore:ParameterRange]{sagemaker.mlcore::ParameterRange}} -> \code{CategoricalParameter}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -33,7 +33,7 @@ A class for representing hyperparameters that have a discrete list of
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ParameterRange" data-id="format">}\href{../../R6sagemaker.mlcore/html/ParameterRange.html#method-format}{\code{R6sagemaker.mlcore::ParameterRange$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ParameterRange" data-id="format">}\href{../../sagemaker.mlcore/html/ParameterRange.html#method-format}{\code{sagemaker.mlcore::ParameterRange$format()}}\out{</span>}
 }
 \out{</details>}
 }

@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 #' @importFrom urltools url_parse
 #' @import jsonlite
@@ -2752,7 +2752,7 @@ ModelQualityMonitor = R6Class("ModelQualityMonitor",
 #' @description Provides functionality to retrieve baseline-specific files output from baselining job.
 #' @export
 BaseliningJob = R6Class("BaseliningJob",
-  inherit = R6sagemaker.common::ProcessingJob,
+  inherit = sagemaker.common::ProcessingJob,
   public = list(
 
     #' @description Initializes a Baselining job that tracks a baselining job kicked off by the suggest
@@ -2862,7 +2862,7 @@ BaseliningJob = R6Class("BaseliningJob",
 #'              executions
 #' @export
 MonitoringExecution = R6Class("MonitoringExecution",
-   inherit = R6sagemaker.common::ProcessingJob,
+   inherit = sagemaker.common::ProcessingJob,
    public = list(
     #' @description Initializes a MonitoringExecution job that tracks a monitoring execution kicked off by
     #'              an Amazon SageMaker Model Monitoring Schedule.

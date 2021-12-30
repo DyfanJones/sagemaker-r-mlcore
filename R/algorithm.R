@@ -8,7 +8,7 @@
 #' @include predictor.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title AlgorithmEstimator Class
 #' @description A generic Estimator to train using any algorithm object (with an
@@ -17,7 +17,7 @@
 #'              client-side validation on all the inputs.
 #' @export
 AlgorithmEstimator = R6Class("AlgorithmEstimator",
-   inherit = R6sagemaker.common::EstimatorBase,
+   inherit = sagemaker.common::EstimatorBase,
    public = list(
      #' @field .hyperpameters_with_range
      #' These Hyperparameter Types have a range definition.
@@ -243,7 +243,7 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
         removed_kwargs("accept", kwargs)
         if (is.null(predictor_cls)) {
            predict_wrapper = function(endpoint, session){
-              return (R6sagemaker.mlcore::Predictor$new(
+              return (sagemaker.mlcore::Predictor$new(
                  endpoint, session, serializer, deserializer, content_type, accept))
               }
            predictor_cls = predict_wrapper
@@ -257,7 +257,7 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
                       predictor_cls=predictor_cls,
                       ...)
 
-          return(do.call(R6sagemaker.common::ModelPackage$new, param))
+          return(do.call(sagemaker.common::ModelPackage$new, param))
      },
 
      #' @description Return a ``Transformer`` that uses a SageMaker Model based on the
@@ -322,7 +322,7 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
         } else {
            stop("No finished training job found associated with this estimator", call. = F)}
 
-       return(R6sagemaker.common::Transformer$new(
+       return(sagemaker.common::Transformer$new(
          model_name,
          instance_count,
          instance_type,
@@ -492,9 +492,9 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
          # and just create an Instance of Parameter. Note that the range is optional for all
          # the Parameter Types.
          if (parameter_type == "Integer")
-           parameter_class = R6sagemaker.mlcore::IntegerParameter
+           parameter_class = sagemaker.mlcore::IntegerParameter
          else
-           parameter_class = R6sagemaker.mlcore::ContinuousParameter
+           parameter_class = sagemaker.mlcore::ContinuousParameter
 
          if ("Range" %in% names(hyperparameter)){
            min_value = parameter_class$public_methods$cast_to_type(
@@ -504,10 +504,10 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
            parameter_range = parameter_class$new(min_value, max_value)
            }
          } else if(parameter_type == "Categorical") {
-             parameter_class = R6sagemaker.mlcore::CategoricalParameter
+             parameter_class = sagemaker.mlcore::CategoricalParameter
              if("Range" %in% names(hyperparameter)){
                values = hyperparameter$Range[[range_name]][["Values"]]
-               parameter_range = R6sagemaker.mlcore::CategoricalParameter$new(values)}
+               parameter_range = sagemaker.mlcore::CategoricalParameter$new(values)}
           } else if(parameter_type == "FreeText") {
             NULL
           } else

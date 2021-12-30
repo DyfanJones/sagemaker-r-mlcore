@@ -5,14 +5,14 @@
 #' @include serverless_predictor.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import paws
 
 #' @title LambdaModel class
 #' @description A model that can be deployed to Lambda
 #' @export
 LambdaModel = R6Class("LambdaModel",
-  inherit = R6sagemaker.common::ModelBase,
+  inherit = sagemaker.common::ModelBase,
   public = list(
 
     #' @description Initialize instance attributes.

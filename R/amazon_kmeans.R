@@ -8,7 +8,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title An unsupervised learning algorithm that attempts to find discrete groupings within data.
 #' @description As the result of KMeans, members of a group are as similar as possible to one another and as
@@ -320,7 +320,7 @@ KMeansPredictor = R6Class("KMeansPredictor",
 #'              Predictor to performs k-means cluster assignment.
 #' @export
 KMeansModel = R6Class("KMeansModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize KMeansPredictor Class

@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title An unsupervised algorithm for detecting anomalous data points within a data set.
 #' @description These are observations which diverge from otherwise well-structured or patterned data.
@@ -225,7 +225,7 @@ RandomCutForestPredictor = R6Class("RandomCutForestPredictor",
 #'              Predictor that calculates anomaly scores for datapoints.
 #' @export
 RandomCutForestModel = R6Class("RandomCutForestModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize RandomCutForestModel class

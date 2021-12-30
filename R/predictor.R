@@ -7,8 +7,7 @@
 #' @include deserializers.R
 
 #' @import R6
-#' @import R6sagemaker.common
-#' @import utils
+#' @import sagemaker.common
 
 #' @title PredictorBase Class
 #' @description An object that encapsulates a deployed model

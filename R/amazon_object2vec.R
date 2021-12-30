@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 
 #' @title A general-purpose neural embedding algorithm that is highly customizable.
@@ -639,7 +639,7 @@ Object2Vec = R6Class("Object2Vec",
 #'              Predictor that calculates anomaly scores for datapoints.
 #' @export
 Object2VecModel = R6Class("Object2VecModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize Object2VecModel class

@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title A supervised learning algorithm used in classification and regression.
 #' @description Factorization Machines combine the advantages of Support Vector Machines
@@ -527,7 +527,7 @@ FactorizationMachinesPredictor = R6Class("FactorizationMachinesPredictor",
 #'              returns :class:`FactorizationMachinesPredictor`.
 #' @export
 FactorizationMachinesModel = R6Class("FactorizationMachinesModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize FactorizationMachinesModel class

@@ -8,8 +8,8 @@
 #' @import data.table
 
 #' @title Default BaseDeserializer Class
-#' @description  All BaseDeserializer are children of this class. If a custom
-#'               BaseDeserializer is desired, inherit this class.
+#' @description All BaseDeserializer are children of this class. If a custom
+#'              BaseDeserializer is desired, inherit this class.
 #' @export
 BaseDeserializer = R6Class("BaseDeserializer",
   public = list(
@@ -29,7 +29,9 @@ BaseDeserializer = R6Class("BaseDeserializer",
 
     #' @field ACCEPT
     #' The content types that are expected from the inference endpoint.
-    ACCEPT = function(){}
+    ACCEPT = function(){},
+
+    help = function(){sagemaker.common:::cls_help(self, environment())}
   )
 )
 

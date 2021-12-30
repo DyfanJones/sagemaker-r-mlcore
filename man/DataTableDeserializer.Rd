@@ -7,7 +7,7 @@
 Deserialize CSV or JSON data from an inference endpoint into a data.table.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:BaseDeserializer]{R6sagemaker.mlcore::BaseDeserializer}} -> \code{\link[R6sagemaker.mlcore:SimpleBaseDeserializer]{R6sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{DataTableDeserializer}
+\code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{DataTableDeserializer}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -27,7 +27,7 @@ Deserialize CSV or JSON data from an inference endpoint into a data.table.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{R6sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
 }
 \out{</details>}
 }

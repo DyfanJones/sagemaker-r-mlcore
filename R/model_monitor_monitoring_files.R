@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 #' @import jsonlite
 #' @import uuid

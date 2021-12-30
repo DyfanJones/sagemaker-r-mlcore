@@ -7,31 +7,30 @@
 Deserialize a stream of bytes into a bytes object.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:BaseDeserializer]{R6sagemaker.mlcore::BaseDeserializer}} -> \code{\link[R6sagemaker.mlcore:SimpleBaseDeserializer]{R6sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{BytesDeserializer}
+\code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{BytesDeserializer}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-deserializer}{\code{BytesDeserializer$deserializer()}}
+\item \href{#method-deserialize}{\code{BytesDeserializer$deserialize()}}
 \item \href{#method-clone}{\code{BytesDeserializer$clone()}}
 }
 }
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="deserialize">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-deserialize}{\code{R6sagemaker.mlcore::BaseDeserializer$deserialize()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{R6sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="SimpleBaseDeserializer" data-id="initialize">}\href{../../R6sagemaker.mlcore/html/SimpleBaseDeserializer.html#method-initialize}{\code{R6sagemaker.mlcore::SimpleBaseDeserializer$initialize()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="SimpleBaseDeserializer" data-id="initialize">}\href{../../sagemaker.mlcore/html/SimpleBaseDeserializer.html#method-initialize}{\code{sagemaker.mlcore::SimpleBaseDeserializer$initialize()}}\out{</span>}
 }
 \out{</details>}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-deserializer"></a>}}
-\if{latex}{\out{\hypertarget{method-deserializer}{}}}
-\subsection{Method \code{deserializer()}}{
+\if{html}{\out{<a id="method-deserialize"></a>}}
+\if{latex}{\out{\hypertarget{method-deserialize}{}}}
+\subsection{Method \code{deserialize()}}{
 Read a stream of bytes returned from an inference endpoint.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{BytesDeserializer$deserializer(stream, content_type)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{BytesDeserializer$deserialize(stream, content_type)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

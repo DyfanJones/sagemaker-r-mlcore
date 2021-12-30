@@ -6,7 +6,7 @@
 #' @include model_monitor_model_monitoring.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 #' @import uuid
 #' @import jsonlite

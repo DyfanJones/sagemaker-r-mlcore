@@ -2,7 +2,7 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/multidatamodel.py
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @importFrom urltools url_parse
 
 MULTI_MODEL_CONTAINER_MODE <- "MultiModel"
@@ -13,7 +13,7 @@ MULTI_MODEL_CONTAINER_MODE <- "MultiModel"
 #'              multi-model ``Endpoint``
 #' @export
 MultiDataModel = R6Class("MultiDataModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize a ``MultiDataModel``. In addition to these arguments, it supports all

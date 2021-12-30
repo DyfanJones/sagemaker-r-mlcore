@@ -7,7 +7,7 @@
 Config class of SHAP.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:ExplainabilityConfig]{R6sagemaker.mlcore::ExplainabilityConfig}} -> \code{SHAPConfig}
+\code{\link[sagemaker.mlcore:ExplainabilityConfig]{sagemaker.mlcore::ExplainabilityConfig}} -> \code{SHAPConfig}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -27,7 +27,7 @@ Config class of SHAP.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ExplainabilityConfig" data-id="format">}\href{../../R6sagemaker.mlcore/html/ExplainabilityConfig.html#method-format}{\code{R6sagemaker.mlcore::ExplainabilityConfig$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ExplainabilityConfig" data-id="format">}\href{../../sagemaker.mlcore/html/ExplainabilityConfig.html#method-format}{\code{sagemaker.mlcore::ExplainabilityConfig$format()}}\out{</span>}
 }
 \out{</details>}
 }

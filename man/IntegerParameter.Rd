@@ -7,7 +7,7 @@
 A class for representing hyperparameters that have an integer range of possible values.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:ParameterRange]{R6sagemaker.mlcore::ParameterRange}} -> \code{IntegerParameter}
+\code{\link[sagemaker.mlcore:ParameterRange]{sagemaker.mlcore::ParameterRange}} -> \code{IntegerParameter}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -27,9 +27,9 @@ A class for representing hyperparameters that have an integer range of possible 
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ParameterRange" data-id="as_tuning_range">}\href{../../R6sagemaker.mlcore/html/ParameterRange.html#method-as_tuning_range}{\code{R6sagemaker.mlcore::ParameterRange$as_tuning_range()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ParameterRange" data-id="format">}\href{../../R6sagemaker.mlcore/html/ParameterRange.html#method-format}{\code{R6sagemaker.mlcore::ParameterRange$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ParameterRange" data-id="is_valid">}\href{../../R6sagemaker.mlcore/html/ParameterRange.html#method-is_valid}{\code{R6sagemaker.mlcore::ParameterRange$is_valid()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ParameterRange" data-id="as_tuning_range">}\href{../../sagemaker.mlcore/html/ParameterRange.html#method-as_tuning_range}{\code{sagemaker.mlcore::ParameterRange$as_tuning_range()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ParameterRange" data-id="format">}\href{../../sagemaker.mlcore/html/ParameterRange.html#method-format}{\code{sagemaker.mlcore::ParameterRange$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ParameterRange" data-id="is_valid">}\href{../../sagemaker.mlcore/html/ParameterRange.html#method-is_valid}{\code{sagemaker.mlcore::ParameterRange$is_valid()}}\out{</span>}
 }
 \out{</details>}
 }

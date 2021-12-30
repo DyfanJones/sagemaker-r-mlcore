@@ -1,15 +1,15 @@
-Package: R6sagemaker.mlcore
+Package: sagemaker.mlcore
 Type: Package
-Title: R6sagemaker machine learning core classes and methods
+Title: sagemaker machine learning core classes and methods
 Version: 0.1.0
 Authors@R: c(person("Dyfan", "Jones", email="dyfan.r.jones@gmail.com", role= c("aut", "cre")),
              person("Amazon.com, Inc.", role = "cph"))
-Description: `R6sagemaker` machine learning core classes and methods.
+Description: `sagemaker` machine learning core classes and methods.
 Imports:
     lgr,
     paws,
     R6,
-    R6sagemaker.common,
+    sagemaker.common,
     data.table,
     jsonlite,
     methods,
@@ -27,7 +27,7 @@ Suggests:
 Remotes: DyfanJones/sagemaker-r-common
 License: Apache License (>= 2.0)
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate: 
     'r_utils.R'
     'deserializers.R'

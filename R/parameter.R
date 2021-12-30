@@ -2,7 +2,7 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/parameter.py
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title ParameterRange Class
 #' @description Base class for representing parameter ranges. This is used to define what

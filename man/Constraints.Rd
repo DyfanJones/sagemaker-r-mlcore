@@ -7,7 +7,7 @@
 Represents the constraints JSON file used in Amazon SageMaker Model Monitoring.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:ModelMonitoringFile]{R6sagemaker.mlcore::ModelMonitoringFile}} -> \code{Constraints}
+\code{\link[sagemaker.mlcore:ModelMonitoringFile]{sagemaker.mlcore::ModelMonitoringFile}} -> \code{Constraints}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -23,8 +23,8 @@ Represents the constraints JSON file used in Amazon SageMaker Model Monitoring.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitoringFile" data-id="format">}\href{../../R6sagemaker.mlcore/html/ModelMonitoringFile.html#method-format}{\code{R6sagemaker.mlcore::ModelMonitoringFile$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitoringFile" data-id="save">}\href{../../R6sagemaker.mlcore/html/ModelMonitoringFile.html#method-save}{\code{R6sagemaker.mlcore::ModelMonitoringFile$save()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitoringFile" data-id="format">}\href{../../sagemaker.mlcore/html/ModelMonitoringFile.html#method-format}{\code{sagemaker.mlcore::ModelMonitoringFile$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitoringFile" data-id="save">}\href{../../sagemaker.mlcore/html/ModelMonitoringFile.html#method-save}{\code{sagemaker.mlcore::ModelMonitoringFile$save()}}\out{</span>}
 }
 \out{</details>}
 }

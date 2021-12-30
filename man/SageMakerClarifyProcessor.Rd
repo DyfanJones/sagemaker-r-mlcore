@@ -7,7 +7,7 @@
 Handles SageMaker Processing task to compute bias metrics and explain a model.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.common:Processor]{R6sagemaker.common::Processor}} -> \code{SageMakerClarifyProcessor}
+\code{\link[sagemaker.common:Processor]{sagemaker.common::Processor}} -> \code{SageMakerClarifyProcessor}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -31,7 +31,7 @@ Handles SageMaker Processing task to compute bias metrics and explain a model.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.common" data-topic="Processor" data-id="format">}\href{../../R6sagemaker.common/html/Processor.html#method-format}{\code{R6sagemaker.common::Processor$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Processor" data-id="format">}\href{../../sagemaker.common/html/Processor.html#method-format}{\code{sagemaker.common::Processor$format()}}\out{</span>}
 }
 \out{</details>}
 }

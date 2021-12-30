@@ -1,6 +1,6 @@
 
 # Directory to aws sagemaker proto buf file
-.recordProto <- function() system.file("proto", package= "R6sagemaker.mlcore")
+.recordProto <- function() system.file("proto", package= "sagemaker.mlcore")
 
 # create descriptors
 .FLOAT32TENSOR <- function() RProtoBuf::P("aialgs.data.Float32Tensor")

@@ -9,7 +9,7 @@ Deserialize a stream of data in the .npy or UTF-8 CSV/JSON format.
              R objects through the use of the `reticulate` package.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:BaseDeserializer]{R6sagemaker.mlcore::BaseDeserializer}} -> \code{\link[R6sagemaker.mlcore:SimpleBaseDeserializer]{R6sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{NumpyDeserializer}
+\code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{NumpyDeserializer}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -33,7 +33,7 @@ Deserialize a stream of data in the .npy or UTF-8 CSV/JSON format.
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../R6sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{R6sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="BaseDeserializer" data-id="format">}\href{../../sagemaker.mlcore/html/BaseDeserializer.html#method-format}{\code{sagemaker.mlcore::BaseDeserializer$format()}}\out{</span>}
 }
 \out{</details>}
 }

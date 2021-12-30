@@ -9,7 +9,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 
 #' @title An unsupervised learning algorithm used to organize a corpus of documents into topics
@@ -343,7 +343,7 @@ NTMPredictor = R6Class("NTMPredictor",
 #'              Predictor that transforms vectors to a lower-dimensional representation.
 #' @export
 NTMModel = R6Class("NTMModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize NTMModel class

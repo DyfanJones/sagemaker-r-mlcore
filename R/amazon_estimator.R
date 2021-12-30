@@ -7,7 +7,7 @@
 #' @include amazon_common.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import lgr
 #' @importFrom urltools url_parse
 #' @import paws
@@ -18,7 +18,7 @@
 #'              isn't intended to be instantiated directly.
 #' @export
 AmazonAlgorithmEstimatorBase = R6Class("AmazonAlgorithmEstimatorBase",
-  inherit = R6sagemaker.common::EstimatorBase,
+  inherit = sagemaker.common::EstimatorBase,
   public = list(
     #' @field repo_name
     #' The repo name for the account

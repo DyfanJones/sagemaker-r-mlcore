@@ -7,7 +7,7 @@
 Please see the `initiliaze` method of its base class for how to instantiate it.
 }
 \section{Super classes}{
-\code{\link[R6sagemaker.mlcore:ModelMonitor]{R6sagemaker.mlcore::ModelMonitor}} -> \code{\link[R6sagemaker.mlcore:ClarifyModelMonitor]{R6sagemaker.mlcore::ClarifyModelMonitor}} -> \code{ModelExplainabilityMonitor}
+\code{\link[sagemaker.mlcore:ModelMonitor]{sagemaker.mlcore::ModelMonitor}} -> \code{\link[sagemaker.mlcore:ClarifyModelMonitor]{sagemaker.mlcore::ClarifyModelMonitor}} -> \code{ModelExplainabilityMonitor}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -31,19 +31,19 @@ Please see the `initiliaze` method of its base class for how to instantiate it.
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="baseline_statistics">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-baseline_statistics}{\code{R6sagemaker.mlcore::ModelMonitor$baseline_statistics()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="describe_latest_baselining_job">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-describe_latest_baselining_job}{\code{R6sagemaker.mlcore::ModelMonitor$describe_latest_baselining_job()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="describe_schedule">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-describe_schedule}{\code{R6sagemaker.mlcore::ModelMonitor$describe_schedule()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="format">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-format}{\code{R6sagemaker.mlcore::ModelMonitor$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="latest_monitoring_constraint_violations">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-latest_monitoring_constraint_violations}{\code{R6sagemaker.mlcore::ModelMonitor$latest_monitoring_constraint_violations()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="latest_monitoring_statistics">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-latest_monitoring_statistics}{\code{R6sagemaker.mlcore::ModelMonitor$latest_monitoring_statistics()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="start_monitoring_schedule">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-start_monitoring_schedule}{\code{R6sagemaker.mlcore::ModelMonitor$start_monitoring_schedule()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="stop_monitoring_schedule">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-stop_monitoring_schedule}{\code{R6sagemaker.mlcore::ModelMonitor$stop_monitoring_schedule()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ModelMonitor" data-id="suggested_constraints">}\href{../../R6sagemaker.mlcore/html/ModelMonitor.html#method-suggested_constraints}{\code{R6sagemaker.mlcore::ModelMonitor$suggested_constraints()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="initialize">}\href{../../R6sagemaker.mlcore/html/ClarifyModelMonitor.html#method-initialize}{\code{R6sagemaker.mlcore::ClarifyModelMonitor$initialize()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="latest_monitorying_statistics">}\href{../../R6sagemaker.mlcore/html/ClarifyModelMonitor.html#method-latest_monitorying_statistics}{\code{R6sagemaker.mlcore::ClarifyModelMonitor$latest_monitorying_statistics()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="list_executions">}\href{../../R6sagemaker.mlcore/html/ClarifyModelMonitor.html#method-list_executions}{\code{R6sagemaker.mlcore::ClarifyModelMonitor$list_executions()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="R6sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="run_baseline">}\href{../../R6sagemaker.mlcore/html/ClarifyModelMonitor.html#method-run_baseline}{\code{R6sagemaker.mlcore::ClarifyModelMonitor$run_baseline()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="baseline_statistics">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-baseline_statistics}{\code{sagemaker.mlcore::ModelMonitor$baseline_statistics()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="describe_latest_baselining_job">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-describe_latest_baselining_job}{\code{sagemaker.mlcore::ModelMonitor$describe_latest_baselining_job()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="describe_schedule">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-describe_schedule}{\code{sagemaker.mlcore::ModelMonitor$describe_schedule()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="format">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-format}{\code{sagemaker.mlcore::ModelMonitor$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="latest_monitoring_constraint_violations">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-latest_monitoring_constraint_violations}{\code{sagemaker.mlcore::ModelMonitor$latest_monitoring_constraint_violations()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="latest_monitoring_statistics">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-latest_monitoring_statistics}{\code{sagemaker.mlcore::ModelMonitor$latest_monitoring_statistics()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="start_monitoring_schedule">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-start_monitoring_schedule}{\code{sagemaker.mlcore::ModelMonitor$start_monitoring_schedule()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="stop_monitoring_schedule">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-stop_monitoring_schedule}{\code{sagemaker.mlcore::ModelMonitor$stop_monitoring_schedule()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelMonitor" data-id="suggested_constraints">}\href{../../sagemaker.mlcore/html/ModelMonitor.html#method-suggested_constraints}{\code{sagemaker.mlcore::ModelMonitor$suggested_constraints()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="initialize">}\href{../../sagemaker.mlcore/html/ClarifyModelMonitor.html#method-initialize}{\code{sagemaker.mlcore::ClarifyModelMonitor$initialize()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="latest_monitorying_statistics">}\href{../../sagemaker.mlcore/html/ClarifyModelMonitor.html#method-latest_monitorying_statistics}{\code{sagemaker.mlcore::ClarifyModelMonitor$latest_monitorying_statistics()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="list_executions">}\href{../../sagemaker.mlcore/html/ClarifyModelMonitor.html#method-list_executions}{\code{sagemaker.mlcore::ClarifyModelMonitor$list_executions()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ClarifyModelMonitor" data-id="run_baseline">}\href{../../sagemaker.mlcore/html/ClarifyModelMonitor.html#method-run_baseline}{\code{sagemaker.mlcore::ClarifyModelMonitor$run_baseline()}}\out{</span>}
 }
 \out{</details>}
 }

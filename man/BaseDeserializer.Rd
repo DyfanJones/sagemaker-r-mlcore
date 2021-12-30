@@ -5,7 +5,7 @@
 \title{Default BaseDeserializer Class}
 \description{
 All BaseDeserializer are children of this class. If a custom
-              BaseDeserializer is desired, inherit this class.
+             BaseDeserializer is desired, inherit this class.
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

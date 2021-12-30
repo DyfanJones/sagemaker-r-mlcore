@@ -7,7 +7,7 @@
 Make prediction requests to an Amazon SageMaker endpoint.
 }
 \section{Super class}{
-\code{\link[R6sagemaker.mlcore:PredictorBase]{R6sagemaker.mlcore::PredictorBase}} -> \code{Predictor}
+\code{\link[sagemaker.mlcore:PredictorBase]{sagemaker.mlcore::PredictorBase}} -> \code{Predictor}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

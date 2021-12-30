@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 #' @import jsonlite
 
 #' @title DataConfig Class
@@ -394,7 +394,7 @@ SHAPConfig = R6Class("SHAPConfig",
 #' @description Handles SageMaker Processing task to compute bias metrics and explain a model.
 #' @export
 SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
-  inherit = R6sagemaker.common::Processor,
+  inherit = sagemaker.common::Processor,
   public = list(
 
     #' @field job_name_prefix

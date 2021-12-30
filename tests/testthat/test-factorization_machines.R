@@ -1,7 +1,7 @@
 # NOTE: This code has been modified from AWS Sagemaker Python: https://github.com/aws/sagemaker-python-sdk/blob/master/tests/unit/test_fm.py
 context("factorization machines")
 
-library(R6sagemaker.common)
+library(sagemaker.common)
 
 ROLE = "myrole"
 INSTANCE_COUNT = 1

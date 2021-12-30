@@ -7,7 +7,7 @@
 #' @include serializers.R
 
 #' @import R6
-#' @import R6sagemaker.common
+#' @import sagemaker.common
 
 #' @title An unsupervised learning algorithm that learns the usage patterns for IPv4 addresses.
 #' @description It is designed to capture associations between IPv4 addresses and various entities, such
@@ -289,7 +289,7 @@ IPInsightsPredictor = R6Class("IPInsightsPredictor",
 #'              Predictor that calculates anomaly scores for data points.
 #' @export
 IPInsightsModel = R6Class("IPInsightsModel",
-  inherit = R6sagemaker.common::Model,
+  inherit = sagemaker.common::Model,
   public = list(
 
     #' @description Initialize IPInsightsModel class
