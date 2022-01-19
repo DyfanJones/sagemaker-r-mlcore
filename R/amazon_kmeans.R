@@ -3,12 +3,13 @@
 
 #' @include amazon_estimator.R
 #' @include amazon_hyperparameter.R
+#' @include model.R
 #' @include deserializers.R
 #' @include serializers.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title An unsupervised learning algorithm that attempts to find discrete groupings within data.
 #' @description As the result of KMeans, members of a group are as similar as possible to one another and as
@@ -320,7 +321,7 @@ KMeansPredictor = R6Class("KMeansPredictor",
 #'              Predictor to performs k-means cluster assignment.
 #' @export
 KMeansModel = R6Class("KMeansModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize KMeansPredictor Class
@@ -341,8 +342,8 @@ KMeansModel = R6Class("KMeansModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         KMeans$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=KMeans$public_fields$repo_version

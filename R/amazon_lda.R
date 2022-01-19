@@ -5,11 +5,12 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 #' @import lgr
 
 #' @title An unsupervised learning algorithm attempting to describe data as distinct categories.
@@ -250,7 +251,7 @@ LDAPredictor = R6Class("LDAPredictor",
 #'              Predictor that transforms vectors to a lower-dimensional representation.
 #' @export
 LDAModel = R6Class("LDAModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize LDAModel class
@@ -271,8 +272,8 @@ LDAModel = R6Class("LDAModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         LDA$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=LDA$public_fields$repo_version

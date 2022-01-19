@@ -4,6 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
+#' @import sagemaker.core
 
 #' @title DataCaptureConfig Class
 #' @description Configuration object passed in when deploying models to Amazon SageMaker Endpoints.

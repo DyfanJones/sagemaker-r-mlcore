@@ -9,7 +9,7 @@ A SageMaker ``MultiDataModel`` that can be used to deploy multiple models to the
              multi-model ``Endpoint``
 }
 \section{Super classes}{
-\code{\link[sagemaker.common:ModelBase]{sagemaker.common::ModelBase}} -> \code{\link[sagemaker.common:Model]{sagemaker.common::Model}} -> \code{MultiDataModel}
+\code{\link[sagemaker.mlcore:ModelBase]{sagemaker.mlcore::ModelBase}} -> \code{\link[sagemaker.mlcore:Model]{sagemaker.mlcore::Model}} -> \code{MultiDataModel}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -25,16 +25,16 @@ A SageMaker ``MultiDataModel`` that can be used to deploy multiple models to the
 \if{html}{
 \out{<details ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ModelBase" data-id="format">}\href{../../sagemaker.common/html/ModelBase.html#method-format}{\code{sagemaker.common::ModelBase$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="ModelBase" data-id="help">}\href{../../sagemaker.common/html/ModelBase.html#method-help}{\code{sagemaker.common::ModelBase$help()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id=".create_sagemaker_model">}\href{../../sagemaker.common/html/Model.html#method-.create_sagemaker_model}{\code{sagemaker.common::Model$.create_sagemaker_model()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="check_neo_region">}\href{../../sagemaker.common/html/Model.html#method-check_neo_region}{\code{sagemaker.common::Model$check_neo_region()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="compile">}\href{../../sagemaker.common/html/Model.html#method-compile}{\code{sagemaker.common::Model$compile()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="delete_model">}\href{../../sagemaker.common/html/Model.html#method-delete_model}{\code{sagemaker.common::Model$delete_model()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="enable_network_isolation">}\href{../../sagemaker.common/html/Model.html#method-enable_network_isolation}{\code{sagemaker.common::Model$enable_network_isolation()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="package_for_edge">}\href{../../sagemaker.common/html/Model.html#method-package_for_edge}{\code{sagemaker.common::Model$package_for_edge()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="register">}\href{../../sagemaker.common/html/Model.html#method-register}{\code{sagemaker.common::Model$register()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="sagemaker.common" data-topic="Model" data-id="transformer">}\href{../../sagemaker.common/html/Model.html#method-transformer}{\code{sagemaker.common::Model$transformer()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelBase" data-id="format">}\href{../../sagemaker.mlcore/html/ModelBase.html#method-format}{\code{sagemaker.mlcore::ModelBase$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="ModelBase" data-id="help">}\href{../../sagemaker.mlcore/html/ModelBase.html#method-help}{\code{sagemaker.mlcore::ModelBase$help()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id=".create_sagemaker_model">}\href{../../sagemaker.mlcore/html/Model.html#method-.create_sagemaker_model}{\code{sagemaker.mlcore::Model$.create_sagemaker_model()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="check_neo_region">}\href{../../sagemaker.mlcore/html/Model.html#method-check_neo_region}{\code{sagemaker.mlcore::Model$check_neo_region()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="compile">}\href{../../sagemaker.mlcore/html/Model.html#method-compile}{\code{sagemaker.mlcore::Model$compile()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="delete_model">}\href{../../sagemaker.mlcore/html/Model.html#method-delete_model}{\code{sagemaker.mlcore::Model$delete_model()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="enable_network_isolation">}\href{../../sagemaker.mlcore/html/Model.html#method-enable_network_isolation}{\code{sagemaker.mlcore::Model$enable_network_isolation()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="package_for_edge">}\href{../../sagemaker.mlcore/html/Model.html#method-package_for_edge}{\code{sagemaker.mlcore::Model$package_for_edge()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="register">}\href{../../sagemaker.mlcore/html/Model.html#method-register}{\code{sagemaker.mlcore::Model$register()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="sagemaker.mlcore" data-topic="Model" data-id="transformer">}\href{../../sagemaker.mlcore/html/Model.html#method-transformer}{\code{sagemaker.mlcore::Model$transformer()}}\out{</span>}
 }
 \out{</details>}
 }

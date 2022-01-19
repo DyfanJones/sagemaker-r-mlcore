@@ -9,7 +9,7 @@
 #' @import jsonlite
 #' @import lgr
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 AMAZON_ESTIMATOR_MODULE <- "sagemaker.mlcore"
 AMAZON_ESTIMATOR_CLS_NAMES <- list(
@@ -34,7 +34,7 @@ WARM_START_TYPE <- "WarmStartType"
 #'              * TransferLearning: Type of warm start that allows users to
 #'              reuse training results from existing tuning jobs that have similar algorithm
 #'              code and datasets.
-WarmStartTypes = Enum(
+WarmStartTypes = sagemaker.core::Enum(
   IDENTICAL_DATA_AND_ALGORITHM = "IdenticalDataAndAlgorithm",
   TRANSFER_LEARNING = "TransferLearning",
   .class = "WarmStartTypes"

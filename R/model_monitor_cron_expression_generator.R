@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title CronExpressionGenerator class
 #' @description Generates cron expression strings for the SageMaker Model Monitoring Schedule API.

@@ -5,11 +5,12 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title An unsupervised algorithm for detecting anomalous data points within a data set.
 #' @description These are observations which diverge from otherwise well-structured or patterned data.
@@ -225,7 +226,7 @@ RandomCutForestPredictor = R6Class("RandomCutForestPredictor",
 #'              Predictor that calculates anomaly scores for datapoints.
 #' @export
 RandomCutForestModel = R6Class("RandomCutForestModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize RandomCutForestModel class
@@ -246,8 +247,8 @@ RandomCutForestModel = R6Class("RandomCutForestModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         RandomCutForest$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=RandomCutForest$public_fields$repo_version

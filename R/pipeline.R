@@ -4,7 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title A pipeline of SageMaker `Model` instances.
 #' @description This pipeline can be deployed as an `Endpoint` on SageMaker.

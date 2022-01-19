@@ -6,10 +6,11 @@
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
 #' @include predictor.R
+#' @include model.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title A supervised learning algorithm used in classification and regression.
 #' @description Factorization Machines combine the advantages of Support Vector Machines
@@ -519,15 +520,13 @@ FactorizationMachinesPredictor = R6Class("FactorizationMachinesPredictor",
   lock_objects = F
 )
 
-
-
 #' @title Amazon FactorizationMachinesModel Class
 #' @description Reference S3 model data created by FactorizationMachines estimator.
 #'              Calling :meth:`~sagemaker.model.Model.deploy` creates an Endpoint and
 #'              returns :class:`FactorizationMachinesPredictor`.
 #' @export
 FactorizationMachinesModel = R6Class("FactorizationMachinesModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize FactorizationMachinesModel class
@@ -548,8 +547,8 @@ FactorizationMachinesModel = R6Class("FactorizationMachinesModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         FactorizationMachines$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=FactorizationMachines$public_fields$repo_version
