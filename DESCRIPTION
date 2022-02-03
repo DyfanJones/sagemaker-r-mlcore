@@ -7,7 +7,6 @@ Authors@R: c(person("Dyfan", "Jones", email="dyfan.r.jones@gmail.com", role= c("
 Description: `sagemaker` machine learning core classes and methods.
 Imports:
     lgr,
-    paws,
     R6,
     sagemaker.core,
     sagemaker.common,
