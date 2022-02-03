@@ -421,12 +421,17 @@ Model = R6Class("Model",
     #' @param data_capture_config (sagemaker.model_monitor.DataCaptureConfig): Specifies
     #'              configuration related to Endpoint data capture for use with
     #'              Amazon SageMaker Model Monitoring. Default: None.
+    #' @param serverless_inference_config (sagemaker.serverless.ServerlessInferenceConfig):
+    #'              Specifies configuration related to serverless endpoint. Use this configuration
+    #'              when trying to create serverless endpoint and make serverless inference. If
+    #'              empty object passed through, we will use pre-defined values in
+    #'              ``ServerlessInferenceConfig`` class to deploy serverless endpoint (default: None)
     #' @param ... : pass deprecated parameters.
     #' @return callable[string, sagemaker.session.Session] or None: Invocation of
     #'              ``self.predictor_cls`` on the created endpoint name, if ``self.predictor_cls``
     #'              is not None. Otherwise, return None.
-    deploy = function(initial_instance_count,
-                      instance_type,
+    deploy = function(initial_instance_count=NULL,
+                      instance_type=NULL,
                       serializer=NULL,
                       deserializer=NULL,
                       accelerator_type=NULL,
@@ -435,6 +440,7 @@ Model = R6Class("Model",
                       kms_key=NULL,
                       wait=TRUE,
                       data_capture_config=NULL,
+                      serverless_inference_config=NULL,
                       ...){
       kwargs = list(...)
       removed_kwargs("update_endpoint", kwargs)
@@ -442,6 +448,18 @@ Model = R6Class("Model",
 
       if(is.null(self$role))
         ValueError$new("Role can not be null for deploying a model")
+
+
+      is_serverless = !is.null(serverless_inference_config)
+      if (!is_serverless && (is.null(instance_type) && is.null(initial_instance_count)))
+        ValueError$new(
+          "Must specify instance type and instance count unless using serverless inference"
+        )
+
+      if(is_serverless && !inherits(serverless_inference_config, "ServerlessInferenceConfig"))
+        ValueError$new(
+          "serverless_inference_config needs to be a ServerlessInferenceConfig object"
+        )
 
       if (startsWith(instance_type,"ml.inf") && isFALSE(private$.is_compiled_model))
         LOGGER$warn("Your model is not compiled. Please compile your model before using Inferentia.")
@@ -454,15 +472,25 @@ Model = R6Class("Model",
       }
 
       self$.create_sagemaker_model(instance_type, accelerator_type, tags)
+
+      serverless_inference_config_dict = (
+        if (is_serverless) serverless_inference_config$to_request_list() else NULL
+      )
       prod_variant = production_variant(
-        self$name, instance_type, initial_instance_count, accelerator_type=accelerator_type
+        self$name,
+        instance_type,
+        initial_instance_count,
+        accelerator_type=accelerator_type,
+        serverless_inference_config=serverless_inference_config_list
       )
       if (!is.null(endpoint_name)) {
         self$endpoint_name = endpoint_name
       } else {
-        base_endpoint_name = self$.base_name %||% base_from_name(self$name)
-        if (!is.null(private$.is_compiled_model) && !endsWith(base_endpoint_name, compiled_model_suffix))
-          base_endpoint_name = paste(base_endpoint_name, compiled_model_suffix, sep = "-", collapse = "-")
+        base_endpoint_name = self$.base_name %||% sagemaker.core::base_from_name(self$name)
+        if(!is.null(private$.is_compiled_model) && !is_serverless){
+          if (!endsWith(base_endpoint_name, compiled_model_suffix))
+            base_endpoint_name = paste(base_endpoint_name, compiled_model_suffix, sep = "-", collapse = "-")
+        }
         self$endpoint_name = name_from_base(base_endpoint_name)
       }
       data_capture_config_list = NULL

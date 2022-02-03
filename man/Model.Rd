@@ -384,8 +384,8 @@ Deploy this ``Model`` to an ``Endpoint`` and optionally return a
              ``endpoint_name`` field of this ``Model`` after deploy returns.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Model$deploy(
-  initial_instance_count,
-  instance_type,
+  initial_instance_count = NULL,
+  instance_type = NULL,
   serializer = NULL,
   deserializer = NULL,
   accelerator_type = NULL,
@@ -394,6 +394,7 @@ Deploy this ``Model`` to an ``Endpoint`` and optionally return a
   kms_key = NULL,
   wait = TRUE,
   data_capture_config = NULL,
+  serverless_inference_config = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -442,6 +443,12 @@ this model completes (default: True).}
 \item{\code{data_capture_config}}{(sagemaker.model_monitor.DataCaptureConfig): Specifies
 configuration related to Endpoint data capture for use with
 Amazon SageMaker Model Monitoring. Default: None.}
+
+\item{\code{serverless_inference_config}}{(sagemaker.serverless.ServerlessInferenceConfig):
+Specifies configuration related to serverless endpoint. Use this configuration
+when trying to create serverless endpoint and make serverless inference. If
+empty object passed through, we will use pre-defined values in
+``ServerlessInferenceConfig`` class to deploy serverless endpoint (default: None)}
 
 \item{\code{...}}{: pass deprecated parameters.}
 }

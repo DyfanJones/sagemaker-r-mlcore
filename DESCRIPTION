@@ -65,5 +65,6 @@ Collate:
     'pipeline.R'
     'serverless_model.R'
     'serverless_predictor.R'
+    'training_compiler_config.R'
     'tuner.R'
     'zzz.R'

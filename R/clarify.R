@@ -4,6 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
+#' @import sagemaker.core
 #' @import sagemaker.common
 #' @import jsonlite
 
@@ -789,18 +790,18 @@ SageMakerClarifyProcessor = R6Class("SageMakerClarifyProcessor",
   )
 )
 
-# Uploads the local analysis_config_file to the s3_output_path.
-# Args:
-#   analysis_config_file (str): File path to the local analysis config file.
-# s3_output_path (str): S3 prefix to store the analysis config file.
-# sagemaker_session (:class:`~sagemaker.session.Session`):
-#   Session object which manages interactions with Amazon SageMaker and
-# any other AWS services needed. If not specified, the processor creates
-# one using the default AWS configuration chain.
-# kms_key (str): The ARN of the KMS key that is used to encrypt the
-# user code file (default: None).
-# Returns:
-#   The S3 uri of the uploaded file.
+#' @title Uploads the local analysis_config_file to the s3_output_path.
+#' @param analysis_config_file (str): File path to the local analysis config file.
+#' @param s3_output_path (str): S3 prefix to store the analysis config file.
+#' @param sagemaker_session (:class:`~sagemaker.session.Session`):
+#'              Session object which manages interactions with Amazon SageMaker and
+#'              any other AWS services needed. If not specified, the processor creates
+#'              one using the default AWS configuration chain.
+#' @param kms_key (str): The ARN of the KMS key that is used to encrypt the
+#'              user code file (default: None).
+#' @return The S3 uri of the uploaded file.
+#' @noRd
+#' @export
 .upload_analysis_config = function(analysis_config_file,
                                    s3_output_path,
                                    sagemaker_session,
