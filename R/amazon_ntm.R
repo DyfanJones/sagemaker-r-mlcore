@@ -5,11 +5,12 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 #' @import lgr
 
 #' @title An unsupervised learning algorithm used to organize a corpus of documents into topics
@@ -343,7 +344,7 @@ NTMPredictor = R6Class("NTMPredictor",
 #'              Predictor that transforms vectors to a lower-dimensional representation.
 #' @export
 NTMModel = R6Class("NTMModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize NTMModel class
@@ -364,8 +365,8 @@ NTMModel = R6Class("NTMModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         NTM$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=NTM$public_fields$repo_version

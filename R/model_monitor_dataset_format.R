@@ -4,6 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
+#' @import sagemaker.core
 
 #' @title DatasetFormat Class
 #' @description Represents a Dataset Format that is used when calling a DefaultModelMonitor.

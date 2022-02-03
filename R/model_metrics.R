@@ -2,7 +2,7 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/model_metrics.py
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title ModelMetrics class
 #' @description Accepts model metrics parameters for conversion to request dict.

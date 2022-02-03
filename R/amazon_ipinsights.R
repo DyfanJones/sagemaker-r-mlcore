@@ -3,11 +3,12 @@
 
 #' @include amazon_estimator.R
 #' @include amazon_hyperparameter.R
+#' @include model.R
 #' @include deserializers.R
 #' @include serializers.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title An unsupervised learning algorithm that learns the usage patterns for IPv4 addresses.
 #' @description It is designed to capture associations between IPv4 addresses and various entities, such
@@ -289,7 +290,7 @@ IPInsightsPredictor = R6Class("IPInsightsPredictor",
 #'              Predictor that calculates anomaly scores for data points.
 #' @export
 IPInsightsModel = R6Class("IPInsightsModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize IPInsightsModel class
@@ -310,8 +311,8 @@ IPInsightsModel = R6Class("IPInsightsModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         IPInsights$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=IPInsights$public_fields$repo_version,

@@ -6,7 +6,7 @@
 #' @include model_monitor_model_monitoring.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 #' @import lgr
 #' @import uuid
 #' @import jsonlite
@@ -480,7 +480,7 @@ ModelBiasMonitor = R6Class("ModelBiasMonitor",
       # create job definition
       monitor_schedule_name = private$.generate_monitoring_schedule_name(
         schedule_name=monitor_schedule_name)
-      new_job_definition_name = name_from_base(self$JOB_DEFINITION_BASE_NAME)
+      new_job_definition_name = sagemaker.core::name_from_base(self$JOB_DEFINITION_BASE_NAME)
       request_dict = private$.build_create_job_definition_request(
         monitoring_schedule_name=monitor_schedule_name,
         job_definition_name=new_job_definition_name,
@@ -605,7 +605,7 @@ ModelBiasMonitor = R6Class("ModelBiasMonitor",
       # Need to update schedule with a new job definition
       job_desc = self$sagemaker_session$sagemaker$describe_model_bias_job_definition(
         JobDefinitionName=self$job_definition_name)
-      new_job_definition_name = name_from_base(self$JOB_DEFINITION_BASE_NAME)
+      new_job_definition_name = sagemaker.core::name_from_base(self$JOB_DEFINITION_BASE_NAME)
       request_dict = private$.build_create_job_definition_request(
         monitoring_schedule_name=self$monitoring_schedule_name,
         job_definition_name=new_job_definition_name,
@@ -864,7 +864,7 @@ ModelExplainabilityMonitor = R6Class("ModelExplainabilityMonitor",
       monitor_schedule_name = private$.generate_monitoring_schedule_name(
         schedule_name=monitor_schedule_name
       )
-      new_job_definition_name = name_from_base(self$JOB_DEFINITION_BASE_NAME)
+      new_job_definition_name = sagemaker.core::name_from_base(self$JOB_DEFINITION_BASE_NAME)
       request_dict = private$.build_create_job_definition_request(
         monitoring_schedule_name=monitor_schedule_name,
         job_definition_name=new_job_definition_name,
@@ -981,7 +981,7 @@ ModelExplainabilityMonitor = R6Class("ModelExplainabilityMonitor",
         self$sagemaker_session$sagemaker$describe_model_explainability_job_definition(
           JobDefinitionName=self$job_definition_name)
       )
-      new_job_definition_name = name_from_base(self$JOB_DEFINITION_BASE_NAME)
+      new_job_definition_name = sagemaker.core::name_from_base(self$JOB_DEFINITION_BASE_NAME)
       request_dict = private$.build_create_job_definition_request(
         monitoring_schedule_name=self$monitoring_schedule_name,
         job_definition_name=new_job_definition_name,

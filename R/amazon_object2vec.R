@@ -5,6 +5,7 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
@@ -639,7 +640,7 @@ Object2Vec = R6Class("Object2Vec",
 #'              Predictor that calculates anomaly scores for datapoints.
 #' @export
 Object2VecModel = R6Class("Object2VecModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize Object2VecModel class
@@ -660,8 +661,8 @@ Object2VecModel = R6Class("Object2VecModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         Object2Vec$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=Object2Vec$public_fields$repo_version

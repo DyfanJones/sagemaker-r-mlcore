@@ -5,20 +5,21 @@
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
 #' @include amazon_common.R
+#' @include estimator.R
 
 #' @import R6
+#' @import sagemaker.core
 #' @import sagemaker.common
 #' @import lgr
 #' @importFrom urltools url_parse
-#' @import paws
-#' @import jsonlite
+#' @importFrom jsonlite toJSON
 
 #' @title AmazonAlgorithmEstimatorBase Class
 #' @description Base class for Amazon first-party Estimator implementations. This class
 #'              isn't intended to be instantiated directly.
 #' @export
 AmazonAlgorithmEstimatorBase = R6Class("AmazonAlgorithmEstimatorBase",
-  inherit = sagemaker.common::EstimatorBase,
+  inherit = EstimatorBase,
   public = list(
     #' @field repo_name
     #' The repo name for the account
@@ -444,7 +445,7 @@ RecordSet = R6Class("RecordSet",
                  names(cls_gen$private_fields),
                  names(cls_gen$private_methods))
       output = as.list(self)[setdiff(ls(self), output)]
-      return(toJSON(output, auto_unbox = T))
+      return(jsonlite::toJSON(output, auto_unbox = T))
     }
   ),
   lock_object = F
@@ -520,7 +521,7 @@ FileSystemRecordSet = R6Class("FileSystemRecordSet",
                  names(cls_gen$private_fields),
                  names(cls_gen$private_methods))
       output = as.list(self)[setdiff(ls(self), output)]
-      return(toJSON(output, auto_unbox = T))
+      return(jsonlite::toJSON(output, auto_unbox = T))
       }
     )
 )
@@ -591,7 +592,7 @@ upload_matrix_to_s3_shards = function(num_shards,
       uploaded_files = c(uploaded_files, file_name)
     }
     manifest_key = paste0(key_prefix,".amazon.manifest")
-    manifest_str = toJSON(c(list(list("prefix" = sprintf("s3://%s/%s", bucket, key_prefix))), uploaded_files),
+    manifest_str = jsonlite::toJSON(c(list(list("prefix" = sprintf("s3://%s/%s", bucket, key_prefix))), uploaded_files),
                           auto_unbox = T)
     s3$put_object(Bucket = bucket, Key = manifest_key,
                   Body = charToRaw(manifest_str),

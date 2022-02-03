@@ -1,6 +1,8 @@
 # NOTE: This code has been modified from AWS Sagemaker Python:
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/multidatamodel.py
 
+#' @include model.R
+
 #' @import R6
 #' @import sagemaker.common
 #' @importFrom urltools url_parse
@@ -13,7 +15,7 @@ MULTI_MODEL_CONTAINER_MODE <- "MultiModel"
 #'              multi-model ``Endpoint``
 #' @export
 MultiDataModel = R6Class("MultiDataModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize a ``MultiDataModel``. In addition to these arguments, it supports all

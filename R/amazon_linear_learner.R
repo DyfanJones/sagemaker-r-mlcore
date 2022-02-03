@@ -5,11 +5,12 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title A supervised learning algorithms used for solving classification or regression problems.
 #' @description For input, you give the model labeled examples (x, y). x is a high-dimensional vector and
@@ -839,7 +840,7 @@ LinearLearnerPredictor = R6Class("LinearLearnerPredictor",
 #'              :class:`LinearLearnerPredictor`
 #' @export
 LinearLearnerModel = R6Class("LinearLearnerModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public = list(
 
     #' @description Initialize LinearLearnerModel class
@@ -860,8 +861,8 @@ LinearLearnerModel = R6Class("LinearLearnerModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         LinearLearner$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=LinearLearner$public_fields$repo_version

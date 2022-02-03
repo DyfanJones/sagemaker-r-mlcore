@@ -4,6 +4,7 @@
 #' @include r_utils.R
 
 #' @import R6
+#' @import sagemaker.core
 #' @import sagemaker.common
 #' @import lgr
 #' @importFrom urltools url_parse
@@ -107,7 +108,7 @@ ModelMonitor = R6Class("ModelMonitor",
      self$output_kms_key = output_kms_key
      self$max_runtime_in_seconds = max_runtime_in_seconds
      self$base_job_name = base_job_name
-     self$sagemaker_session = sagemaker_session %||% Session$new()
+     self$sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
      self$env = env
      self$tags = tags
      self$network_config = network_config
@@ -143,7 +144,7 @@ ModelMonitor = R6Class("ModelMonitor",
                   baseline_inputs=baseline_inputs)
      normalized_output = private$.normalize_processing_output(output=output)
 
-     baselining_processor = Processor$new(
+     baselining_processor = sagemaker.common::Processor$new(
        role=self$role,
        image_uri=self$image_uri,
        instance_count=self$instance_count,
@@ -555,7 +556,7 @@ ModelMonitor = R6Class("ModelMonitor",
    #'              AWS services needed. If not specified, one is created using
    #'              the default AWS configuration chain.
    attach = function(monitor_schedule_name, sagemaker_session=NULL){
-     sagemaker_session = sagemaker_session %||% Session$new()
+     sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
      schedule_desc = sagemaker_session$describe_monitoring_schedule(
        monitoring_schedule_name=monitor_schedule_name)
 
@@ -884,7 +885,7 @@ ModelMonitor = R6Class("ModelMonitor",
          .BASELINING_S3_PATH,
          self$latest_baselining_job_name,
          .RESULTS_S3_PATH)
-      return(ProcessingOutput$new(
+      return(sagemaker.common::ProcessingOutput$new(
          source=file.path(.CONTAINER_BASE_PATH, .CONTAINER_OUTPUT_PATH),
          destination=s3_uri,
          output_name=.DEFAULT_OUTPUT_NAME))
@@ -903,7 +904,7 @@ ModelMonitor = R6Class("ModelMonitor",
          self$sagemaker_session$default_bucket(),
          self$latest_baselining_job_name,
          "output")
-       output = ProcessingOutput$new(
+       output = sagemaker.common::ProcessingOutput$new(
          source=output, destination=s3_uri, output_name=.DEFAULT_OUTPUT_NAME)
      }
      return(output)
@@ -1057,7 +1058,7 @@ ModelMonitor = R6Class("ModelMonitor",
             local_path=source, desired_s3_uri=s3_uri, session=self$sagemaker_session)
          source = s3_uri
       }
-      return(ProcessingInput$new(source=source, destination=destination, input_name=name))
+      return(sagemaker.common::ProcessingInput$new(source=source, destination=destination, input_name=name))
    },
 
    # Updates existing monitoring schedule with new job definition and/or schedule expression.
@@ -1141,7 +1142,7 @@ DefaultModelMonitor = R6Class("DefaultModelMonitor",
                           env=NULL,
                           tags=NULL,
                           network_config=NULL){
-      session = sagemaker_session %||% Session$new()
+      session = sagemaker_session %||% sagemaker.core::Session$new()
       super$intialize(
         role=role,
         image_uri=private$.get_default_image_uri(session$paws_region_name),
@@ -1238,7 +1239,7 @@ DefaultModelMonitor = R6Class("DefaultModelMonitor",
         record_preprocessor_script_container_path=record_preprocessor_script_container_path,
         post_processor_script_container_path=post_processor_script_container_path)
 
-      baselining_processor = Processor$new(
+      baselining_processor = sagemaker.common::Processor$new(
         role=self$role,
         image_uri=self$image_uri,
         instance_count=self$instance_count,
@@ -1581,7 +1582,7 @@ DefaultModelMonitor = R6Class("DefaultModelMonitor",
     #'              the default AWS configuration chain.
     attach = function(monitor_schedule_name,
                       sagemaker_session=NULL){
-      sagemaker_session = sagemaker_session %||% Session$new()
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
       schedule_desc = sagemaker_session$describe_monitoring_schedule(
         monitoring_schedule_name=monitor_schedule_name)
 
@@ -2131,7 +2132,7 @@ ModelQualityMonitor = R6Class("ModelQualityMonitor",
                             env=NULL,
                             tags=NULL,
                             network_config=NULL){
-         session = sagemaker_session %||% Session$new()
+         session = sagemaker_session %||% sagemaker.core::Session$new()
          super$initialize(
             role=role,
             image_uri=private$.get_default_image_uri(session$region_name),
@@ -2229,7 +2230,7 @@ ModelQualityMonitor = R6Class("ModelQualityMonitor",
             ground_truth_attribute=ground_truth_attribute,
             probability_threshold_attribute=probability_threshold_attribute)
 
-         baselining_processor = Processor$new(
+         baselining_processor = sagemaker.common::Processor$new(
             role=self$role,
             image_uri=self$image_uri,
             instance_count=self$instance_count,
@@ -2522,7 +2523,7 @@ ModelQualityMonitor = R6Class("ModelQualityMonitor",
       #'              the default AWS configuration chain.
       attach = function(monitor_schedule_name,
                         sagemaker_session=NULL){
-         sagemaker_session = sagemaker_session %||% Session$new()
+         sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
          schedule_desc = sagemaker_session$describe_monitoring_schedule(
             monitoring_schedule_name=monitor_schedule_name)
          monitoring_type = schedule_desc[["MonitoringScheduleConfig"]][["MonitoringType"]]
@@ -2913,14 +2914,14 @@ MonitoringExecution = R6Class("MonitoringExecution",
       cls$sagemaker_session=sagemaker_session
       cls$job_name=processing_job_name
       cls$inputs = lapply(job_desc[["ProcessingInputs"]], function(processing_input){
-        ProcessingInput$new(source=processing_input[["S3Input"]][["S3Uri"]],
+        sagemaker.common::ProcessingInput$new(source=processing_input[["S3Input"]][["S3Uri"]],
                             destination=processing_input[["S3Input"]][["LocalPath"]],
                             input_name=processing_input[["InputName"]],
                             s3_data_type=processing_input[["S3Input"]][["S3DataType"]],
                             s3_input_mode=processing_input[["S3Input"]][["S3InputMode"]],
                             s3_data_distribution_type=processing_input[["S3Input"]][["S3DataDistributionType"]],
                             s3_compression_type=processing_input[["S3Input"]][["S3CompressionType"]])})
-      cls$output = ProcessingOutput$new(
+      cls$output = sagemaker.common::ProcessingOutput$new(
          source=output_config[["S3Output"]][["LocalPath"]],
          destination=output_config[["S3Output"]][["S3Uri"]],
          output_name=output_config[["OutputName"]])

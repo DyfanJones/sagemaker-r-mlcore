@@ -7,7 +7,7 @@
 #' @include deserializers.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title PredictorBase Class
 #' @description An object that encapsulates a deployed model
@@ -100,7 +100,7 @@ Predictor = R6Class("Predictor",
 
       endpoint_name = renamed_kwargs("endpoint" ,"endpoint_name", endpoint_name, kwargs)
       self$endpoint_name = endpoint_name
-      self$sagemaker_session = sagemaker_session %||% Session$new()
+      self$sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
       self$serializer = if(inherits(serializer, "BaseSerializer")) serializer else ValueError$new("Please use a R6 BaseSerializer Class.")
       self$deserializer = if(inherits(deserializer, "BaseDeserializer")) deserializer else ValueError$new("Please use a R6 Deserializer Class.")
 

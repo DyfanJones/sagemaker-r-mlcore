@@ -9,6 +9,7 @@ Imports:
     lgr,
     paws,
     R6,
+    sagemaker.core,
     sagemaker.common,
     data.table,
     jsonlite,
@@ -19,12 +20,13 @@ Suggests:
     crayon,
     Matrix,
     sparsio,
-    RProtoBuf,
     readr,
     reticulate,
     testthat,
     tibble
-Remotes: DyfanJones/sagemaker-r-common
+Remotes: 
+  DyfanJones/sagemaker-r-core,
+  DyfanJones/sagemaker-r-common
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 RoxygenNote: 7.1.2
@@ -34,9 +36,10 @@ Collate:
     'serializers.R'
     'model_monitor_model_monitoring.R'
     'predictor.R'
+    'model.R'
+    'estimator.R'
     'parameter.R'
     'algorithm.R'
-    'amazon_record_pb2.R'
     'amazon_common.R'
     'amazon_validation.R'
     'amazon_hyperparameter.R'
@@ -60,7 +63,8 @@ Collate:
     'model_monitor_monitoring_files.R'
     'multidatamodel.R'
     'pipeline.R'
-    'serverless_predictor.R'
     'serverless_model.R'
+    'serverless_predictor.R'
+    'training_compiler_config.R'
     'tuner.R'
     'zzz.R'

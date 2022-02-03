@@ -6,7 +6,7 @@
 #' @import R6
 #' @import sagemaker.common
 #' @import lgr
-#' @import jsonlite
+#' @importFrom jsonlite fromJSON
 #' @import uuid
 
 NO_SUCH_KEY_CODE = "NoSuchKey"
@@ -97,7 +97,7 @@ Statistics = R6Class("Statistics",
    from_s3_uri = function(statistics_file_s3_uri,
                           kms_key=NULL,
                           sagemaker_session=NULL){
-     tryCatch({body = S3Downloader$new()$read_file(s3_uri=statistics_file_s3_uri, sagemaker_session=sagemaker_session)},
+     tryCatch({body = sagemaker.core::S3Downloader$new()$read_file(s3_uri=statistics_file_s3_uri, sagemaker_session=sagemaker_session)},
               error = function(e) {
                 LOGGER$error(paste0( "\nCould not retrieve statistics file at location '%s'. ",
                                   "To manually retrieve Statistics object from a given uri, ",
@@ -107,9 +107,10 @@ Statistics = R6Class("Statistics",
      body_dict = fromJSON(body)
 
     cls = self$clone()
-    cls$body_dict = body_dict
-    cls$statistics_file_s3_uri = statistics_file_s3_uri
-    cls$kms_key = kms_key
+    kwargs = list(
+      body_dict=body_dict, statistics_file_s3_uri=statistics_file_s3_uri, kms_key=kms_key
+    )
+    do.call(cls$initialize, kwargs)
     return(cls)
    },
 
@@ -127,11 +128,11 @@ Statistics = R6Class("Statistics",
                           kms_key=NULL,
                           file_name=NULL,
                           sagemaker_session=NULL){
-     sagemaker_session = sagemaker_session %||% Session$new()
+     sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
      file_name = file_name %||% "statistics.json"
-     desired_s3_uri = file.path(
+     desired_s3_uri = s3_path_join(
        "s3:/", sagemaker_session$default_bucket(), "monitoring", UUIDgenerate(), file_name)
-     s3_uri = S3Uploader$new()$upload_string_as_file_body(
+     s3_uri = sagemaker.core::S3Uploader$new()$upload_string_as_file_body(
        body=statistics_file_string,
        desired_s3_uri=desired_s3_uri,
        kms_key=kms_key,
@@ -204,19 +205,27 @@ Constraints = R6Class("Constraints",
     from_s3_uri = function(constraints_file_s3_uri,
                            kms_key=NULL,
                            sagemaker_session=NULL){
-      tryCatch({body = S3Downloader$new()$read_file(s3_uri=constraints_file_s3_uri, sagemaker_session=sagemaker_session)},
-               error = function(e) {
-                 LOGGER$error(paste0( "\nCould not retrieve statistics file at location '%s'. ",
-                                   "To manually retrieve Statistics object from a given uri, ",
-                                   "use 'my_model_monitor.statistics(my_s3_uri)' or ",
-                                   "'Statistics.from_s3_uri(my_s3_uri)'") , constraints_file_s3_uri)
-                 stop(e)})
+      tryCatch({
+        body = sagemaker.core::S3Downloader$new()$read_file(s3_uri=constraints_file_s3_uri, sagemaker_session=sagemaker_session)
+        },
+        error = function(e) {
+          LOGGER$error(paste0(
+            "\nCould not retrieve statistics file at location '%s'. ",
+            "To manually retrieve Statistics object from a given uri, ",
+            "use 'my_model_monitor.statistics(my_s3_uri)' or ",
+            "'Statistics.from_s3_uri(my_s3_uri)'") , constraints_file_s3_uri)
+          stop(e)
+      })
       body_dict = fromJSON(body)
 
       cls = self$clone()
-      cls$body_dict = body_dict
-      cls$statistics_file_s3_uri = constraints_file_s3_uri
-      cls$kms_key = kms_key
+      kwargs = list(
+        body_dict = body_dict,
+        constraints_file_s3_uri = constraints_file_s3_uri,
+        kms_key = kms_key,
+        sagemaker_session = sagemaker_session
+      )
+      do.call(cls$initialize, kwargs)
       return(cls)
     },
 
@@ -234,11 +243,11 @@ Constraints = R6Class("Constraints",
                            kms_key=NULL,
                            file_name=NULL,
                            sagemaker_session=NULL){
-      sagemaker_session = sagemaker_session %||% Session$new()
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
       file_name = file_name %||% "constraints.json"
-      desired_s3_uri = file.path(
+      desired_s3_uri = s3_path_join(
         "s3://", sagemaker_session$default_bucket(), "monitoring", UUIDgenerate(), file_name)
-      s3_uri = S3Uploader$new()$upload_string_as_file_body(
+      s3_uri = sagemaker.core::S3Uploader$new()$upload_string_as_file_body(
         body=constraints_file_string,
         desired_s3_uri=desired_s3_uri,
         kms_key=kms_key,
@@ -333,19 +342,28 @@ ConstraintViolations = R6Class("ConstraintViolations",
    from_s3_uri = function(constraint_violations_file_s3_uri,
                           kms_key=NULL,
                           sagemaker_session=NULL){
-     tryCatch({body = S3Downloader$new()$read_file(s3_uri=constraint_violations_file_s3_uri, sagemaker_session=sagemaker_session)},
-              error = function(e) {
-                LOGGER$error(paste0("\nCould not retrieve statistics file at location '%s'. ",
-                                  "To manually retrieve Statistics object from a given uri, ",
-                                  "use 'my_model_monitor.statistics(my_s3_uri)' or ",
-                                  "'Statistics.from_s3_uri(my_s3_uri)'") , constraints_file_s3_uri)
-                stop(e)})
+     tryCatch({
+       body = sagemaker.core::S3Downloader$new()$read_file(
+         s3_uri=constraint_violations_file_s3_uri, sagemaker_session=sagemaker_session
+        )
+       },
+       error = function(e) {
+         LOGGER$error(paste0(
+           "\nCould not retrieve statistics file at location '%s'. ",
+           "To manually retrieve Statistics object from a given uri, ",
+           "use 'my_model_monitor.statistics(my_s3_uri)' or ",
+           "'Statistics.from_s3_uri(my_s3_uri)'") , constraints_file_s3_uri)
+         stop(e)
+     })
      body_dict = fromJSON(body)
 
      cls = self$clone()
-     cls$body_dict = body_dict
-     cls$statistics_file_s3_uri = constraints_file_s3_uri
-     cls$kms_key = kms_key
+     kwargs = list(
+       body_dict=body_dict,
+       constraint_violations_file_s3_uri=constraint_violations_file_s3_uri,
+       kms_key=kms_key
+     )
+     do.call(cls$initialize, kwargs)
      return(cls)
    },
 
@@ -363,11 +381,11 @@ ConstraintViolations = R6Class("ConstraintViolations",
                           kms_key=NULL,
                           file_name=NULL,
                           sagemaker_session=NULL){
-     sagemaker_session = sagemaker_session %||% Session$new()
+     sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
      file_name = file_name %||% "constraint_violations.json"
-     desired_s3_uri = file.path(
+     desired_s3_uri = s3_path_join(
        "s3://", sagemaker_session$default_bucket(), "monitoring", UUIDgenerate(), file_name)
-     s3_uri = S3Uploader$new()$upload_string_as_file_body(
+     s3_uri = sagemaker.core::S3Uploader$new()$upload_string_as_file_body(
        body=constraints_file_string,
        desired_s3_uri=desired_s3_uri,
        kms_key=kms_key,

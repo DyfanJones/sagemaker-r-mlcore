@@ -5,11 +5,12 @@
 #' @include amazon_common.R
 #' @include amazon_hyperparameter.R
 #' @include amazon_validation.R
+#' @include model.R
 #' @include predictor.R
 #' @include r_utils.R
 
 #' @import R6
-#' @import sagemaker.common
+#' @import sagemaker.core
 
 #' @title An index-based algorithm. It uses a non-parametric method for classification or regression.
 #' @description For classification problems, the algorithm queries the k points that are closest to the sample
@@ -305,7 +306,7 @@ KNNPredictor = R6Class("KNNPredictor",
 #'              creates an Endpoint and returns :class:`KNNPredictor`.
 #' @export
 KNNModel = R6Class("KNNModel",
-  inherit = sagemaker.common::Model,
+  inherit = Model,
   public= list(
 
     #' @description Initialize KNNModel Class
@@ -326,8 +327,8 @@ KNNModel = R6Class("KNNModel",
                           role,
                           sagemaker_session=NULL,
                           ...){
-      sagemaker_session = sagemaker_session %||% Session$new()
-      image_uri = ImageUris$new()$retrieve(
+      sagemaker_session = sagemaker_session %||% sagemaker.core::Session$new()
+      image_uri = sagemaker.core::ImageUris$new()$retrieve(
         KNN$public_fields$repo_name,
         sagemaker_session$paws_region_name,
         version=KNN$public_fields$repo_version

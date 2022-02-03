@@ -3,11 +3,13 @@
 
 #' @include r_utils.R
 #' @include parameter.R
+#' @include estimator.R
 #' @include serializers.R
 #' @include deserializers.R
 #' @include predictor.R
 
 #' @import R6
+#' @import sagemaker.core
 #' @import sagemaker.common
 
 #' @title AlgorithmEstimator Class
@@ -17,7 +19,7 @@
 #'              client-side validation on all the inputs.
 #' @export
 AlgorithmEstimator = R6Class("AlgorithmEstimator",
-   inherit = sagemaker.common::EstimatorBase,
+   inherit = EstimatorBase,
    public = list(
      #' @field .hyperpameters_with_range
      #' These Hyperparameter Types have a range definition.
@@ -257,7 +259,7 @@ AlgorithmEstimator = R6Class("AlgorithmEstimator",
                       predictor_cls=predictor_cls,
                       ...)
 
-          return(do.call(sagemaker.common::ModelPackage$new, param))
+          return(do.call(ModelPackage$new, param))
      },
 
      #' @description Return a ``Transformer`` that uses a SageMaker Model based on the
