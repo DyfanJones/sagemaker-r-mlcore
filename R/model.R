@@ -473,7 +473,7 @@ Model = R6Class("Model",
 
       self$.create_sagemaker_model(instance_type, accelerator_type, tags)
 
-      serverless_inference_config_dict = (
+      serverless_inference_config_list = (
         if (is_serverless) serverless_inference_config$to_request_list() else NULL
       )
       prod_variant = production_variant(
