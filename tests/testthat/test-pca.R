@@ -23,25 +23,37 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-pca-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-pca")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-pca-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-pca-dummy"))
+  sms$.call_args("create_model", "sagemaker-pca")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-pca-endpoint")
+  sms$.call_args("logs_for_job")
+
+  sms$s3 <- s3_client
+  sms$sagemaker <- sagemaker_client
+
+  return(sms)
+}
 
 test_that("test init required positional", {
   pca = PCA$new(
@@ -49,7 +61,7 @@ test_that("test init required positional", {
     INSTANCE_COUNT,
     INSTANCE_TYPE,
     NUM_COMPONENTS,
-    sagemaker_session=sagemaker_session)
+    sagemaker_session=sagemaker_session())
   expect_equal(pca$role, COMMON_TRAIN_ARGS$role)
   expect_equal(pca$instance_count, INSTANCE_COUNT)
   expect_equal(pca$instance_type, COMMON_TRAIN_ARGS$instance_type)
@@ -57,7 +69,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca = do.call(PCA$new, pca_args)
 
   expect_equal(pca$role, COMMON_TRAIN_ARGS$role)
@@ -67,7 +79,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  pca_args = c(sagemaker_session=sagemaker_session,
+  pca_args = c(sagemaker_session=sagemaker_session(),
                algorithm_mode="regular",
                subtract_mean="True",
                extra_components=1,
@@ -83,14 +95,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca = do.call(PCA$new, pca_args)
 
   expect_equal(pca$training_image_uri(), ImageUris$new()$retrieve("pca", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca_args$num_components = NULL
   test_param = list("num_components"="string")
 
@@ -101,7 +113,7 @@ test_that("test required hyper parameters type", {
 })
 
 test_that("test required hyper parameters value", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca_args$num_components = NULL
   test_param = list("num_components"=0)
 
@@ -112,7 +124,7 @@ test_that("test required hyper parameters value", {
 })
 
 test_that("test optional hyper parameters type", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("algorithm_mode"=0,
                     "extra_components"="string")
 
@@ -123,7 +135,7 @@ test_that("test optional hyper parameters type", {
 })
 
 test_that("test error optional hyper parameters value", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("algorithm_mode"="string")
 
   for(i in seq_along(test_param)){
@@ -137,7 +149,7 @@ FEATURE_DIM = 10
 MINI_BATCH_SIZE = 200
 
 test_that("test call fit", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -152,7 +164,7 @@ test_that("test call fit", {
 })
 
 test_that("test prepare for training none mini batch_size", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -166,7 +178,7 @@ test_that("test prepare for training none mini batch_size", {
 })
 
 test_that("test prepare for training no mini batch size", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -181,7 +193,7 @@ test_that("test prepare for training no mini batch size", {
 })
 
 test_that("test prepare for training wrong type mini batch size", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -194,7 +206,7 @@ test_that("test prepare for training wrong type mini batch size", {
 })
 
 test_that("test prepare for training multiple channel", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -209,7 +221,7 @@ test_that("test prepare for training multiple channel", {
 })
 
 test_that("test prepare for training multiple channel no train", {
-  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(base_job_name="pca", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -222,7 +234,7 @@ test_that("test prepare for training multiple channel no train", {
 })
 
 test_that("test model image", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -238,7 +250,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  pca_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  pca_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   pca=do.call(PCA$new, pca_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),

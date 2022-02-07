@@ -1,6 +1,7 @@
 # NOTE: This code has been modified from AWS Sagemaker Python: https://github.com/aws/sagemaker-python-sdk/blob/master/tests/unit/test_fm.py
 context("factorization machines")
 
+library(sagemaker.core)
 library(sagemaker.common)
 
 ROLE = "myrole"
@@ -28,30 +29,43 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-fm-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-fm")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-fm-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
 
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$sagemaker <- sagemaker_client
+  sms$s3 <- s3_client
+
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-fm-dummy"))
+  sms$.call_args("create_model", "sagemaker-fm")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-fm-endpoint")
+  sms$.call_args("logs_for_job")
+
+  return(sms)
+}
 
 test_that("test init required positional", {
   fm = FactorizationMachines$new(
-    "myrole", 1, "ml.c4.xlarge", 3, "regressor", sagemaker_session=sagemaker_session
+    "myrole", 1, "ml.c4.xlarge", 3, "regressor", sagemaker_session=sagemaker_session()
   )
   expect_equal(fm$role, "myrole")
   expect_equal(fm$instance_count, 1)
@@ -61,7 +75,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
 
   expect_equal(fm$role, COMMON_TRAIN_ARGS$role)
@@ -73,7 +87,7 @@ test_that("test init required named", {
 
 test_that("test all hyperparameters", {
   fm_args = c(
-    sagemaker_session=sagemaker_session,
+    sagemaker_session=sagemaker_session(),
     epochs=2,
     clip_gradient=1e2,
     eps=0.001,
@@ -129,18 +143,18 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
 
   expect_equal(fm$training_image_uri(), ImageUris$new()$retrieve("factorization-machines", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm_args$num_factors = "Dummy"
   expect_error(do.call(FactorizationMachines$new, fm_args), "Could not convert object 'Dummy' to integer")
 
-  fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm_args$predictor_type = "Dummy"
   expect_error(do.call(FactorizationMachines$new, fm_args), 'Invalid hyperparameter value Dummy for predictor_type. Expecting: Value "binary_classifier" or "regressor"')
 })
@@ -171,7 +185,7 @@ test_that("test optional hyper parameters type", {
     "factors_init_value"="string"
   )
   for(i in seq_along(optional_hyper_parameters)){
-    fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS, optional_hyper_parameters[i])
+    fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS, optional_hyper_parameters[i])
     expect_error(do.call(FactorizationMachines$new, fm_args))
   }
 })
@@ -196,7 +210,7 @@ test_that("test optional hyper parameters type", {
     "factors_init_sigma"=-1
   )
   for(i in seq_along(optional_hyper_parameters)){
-    fm_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS, optional_hyper_parameters[i])
+    fm_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS, optional_hyper_parameters[i])
     expect_error(do.call(FactorizationMachines$new, fm_args))
   }
 })
@@ -206,7 +220,7 @@ FEATURE_DIM = 10
 MINI_BATCH_SIZE = 200
 
 test_that("test call fit", {
-  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
 
   data = RecordSet$new(
@@ -222,7 +236,7 @@ test_that("test call fit", {
 })
 
 test_that("test prepare for training wrong type mini batch size", {
-  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s", BUCKET_NAME, PREFIX),
@@ -235,7 +249,7 @@ test_that("test prepare for training wrong type mini batch size", {
 })
 
 test_that("test prepare for training wrong value mini batch size", {
-  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s", BUCKET_NAME, PREFIX),
@@ -248,7 +262,7 @@ test_that("test prepare for training wrong value mini batch size", {
 })
 
 test_that("test model image", {
-  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s", BUCKET_NAME, PREFIX),
@@ -263,7 +277,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  fm_args = c(base_job_name="fm", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   fm = do.call(FactorizationMachines$new, fm_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s", BUCKET_NAME, PREFIX),

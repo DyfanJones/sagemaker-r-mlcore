@@ -24,25 +24,37 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-lr-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-lr")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-lr-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-lr-dummy"))
+  sms$.call_args("create_model", "sagemaker-lr")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-lr-endpoint")
+  sms$.call_args("logs_for_job")
+
+  sms$s3 <- s3_client
+  sms$sagemaker <- sagemaker_client
+
+  return(sms)
+}
 
 test_that("test init required positional", {
   lr = LinearLearner$new(
@@ -50,7 +62,7 @@ test_that("test init required positional", {
     INSTANCE_COUNT,
     INSTANCE_TYPE,
     PREDICTOR_TYPE,
-    sagemaker_session=sagemaker_session
+    sagemaker_session=sagemaker_session()
   )
   expect_equal(lr$role, COMMON_TRAIN_ARGS$role)
   expect_equal(lr$instance_count, INSTANCE_COUNT)
@@ -59,7 +71,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr = do.call(LinearLearner$new, lr_args)
 
   expect_equal(lr$role, COMMON_TRAIN_ARGS$role)
@@ -69,7 +81,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  lr_args = c(sagemaker_session=sagemaker_session,
+  lr_args = c(sagemaker_session=sagemaker_session(),
               binary_classifier_model_selection_criteria="accuracy",
               target_recall=0.5,
               target_precision=0.6,
@@ -160,14 +172,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr = do.call(LinearLearner$new, lr_args)
 
   expect_equal(lr$training_image_uri(), ImageUris$new()$retrieve("linear-learner", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("predictor_type"=0)
 
   for(i in seq_along(test_param)){
@@ -177,7 +189,7 @@ test_that("test required hyper parameters type", {
 })
 
 test_that("test num classes is required for multiclass classifier", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr_args$predictor_type ="multiclass_classifier"
   expect_error(do.call(LinearLearner$new, lr_args),
                "For predictor_type 'multiclass_classifier', 'num_classes' should be set to a value greater than 2.")
@@ -185,7 +197,7 @@ test_that("test num classes is required for multiclass classifier", {
 
 
 test_that("test num classes can be string for multiclass classifier", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr_args$predictor_type ="multiclass_classifier"
   lr_args$num_classes = "3"
   lr = do.call(LinearLearner$new, lr_args)
@@ -198,7 +210,7 @@ test_that("test num classes can be string for multiclass classifier", {
 })
 
 test_that("test optional hyper parameters type", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("binary_classifier_model_selection_criteria"=0,
                     "target_recall"= "string",
                     "target_precision"= "string",
@@ -240,7 +252,7 @@ test_that("test optional hyper parameters type", {
 })
 
 test_that("test optional hyper parameters type", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("binary_classifier_model_selection_criteria"= "string",
                     "target_recall"= 0,
                     "target_recall"= 1,
@@ -289,7 +301,7 @@ FEATURE_DIM = 10
 DEFAULT_MINI_BATCH_SIZE = 1000
 
 test_that("test prepare for training calculate batch size 1", {
-  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -303,7 +315,7 @@ test_that("test prepare for training calculate batch size 1", {
 })
 
 test_that("test prepare for training calculate batch size 2", {
-  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -317,7 +329,7 @@ test_that("test prepare for training calculate batch size 2", {
 })
 
 test_that("test prepare for training multiple channel", {
-  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -332,7 +344,7 @@ test_that("test prepare for training multiple channel", {
 
 
 test_that("test prepare for training multiple channel no train", {
-  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -344,7 +356,7 @@ test_that("test prepare for training multiple channel no train", {
 })
 
 test_that("test call fit pass batch size", {
-  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(base_job_name="lr", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -359,7 +371,7 @@ test_that("test call fit pass batch size", {
 })
 
 test_that("test model image", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -374,7 +386,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  lr_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  lr_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   lr=do.call(LinearLearner$new, lr_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
