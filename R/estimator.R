@@ -2345,7 +2345,7 @@ Framework = R6Class("Framework",
       if (isFALSE(self$debugger_hook_config)){
         if (!is.null(self$environment))
           self$environment = list()
-        self$environment[[DEBUGGER_FLAG]] = "0"
+        self$environment[[pkg_method("DEBUGGER_FLAG","sagemaker.common")]] = "0"
       }
     },
 
