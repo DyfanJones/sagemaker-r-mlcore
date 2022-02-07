@@ -1,6 +1,9 @@
 # NOTE: This code has been modified from AWS Sagemaker Python:
 # https://github.com/aws/sagemaker-python-sdk/blob/master/tests/unit/test_session.py
 
+library(sagemaker.core)
+library(sagemaker.common)
+
 lg = lgr::get_logger("sagemaker")
 
 MODEL_DATA = "s3://bucket/model.tar.gz"
@@ -667,8 +670,8 @@ test_that("test_framework_with_profiler_config_without_s3_output_path", {
 })
 
 test_that("test_framework_with_no_default_profiler_in_unsupported_region", {
-  sms = sagemaker_session(sagemaker.common:::PROFILER_UNSUPPORTED_REGIONS)
-  # sms$.call_args("train", list(TrainingJobArn = NULL))
+  sms = sagemaker_session(sagemaker.core:::PROFILER_UNSUPPORTED_REGIONS)
+  sms$.call_args("train", list(TrainingJobArn = NULL))
   f = DummyFramework$new(
     entry_point=SCRIPT_PATH,
     role=ROLE,
@@ -2540,10 +2543,10 @@ test_that("test_fit_deploy_tags_in_estimator", {
   variant = list(
     list(
       "ModelName"=model_name,
-      "InstanceType"="c4.4xlarge",
-      "InitialInstanceCount"=1,
       "VariantName"="AllTraffic",
-      "InitialVariantWeight"=1
+      "InitialVariantWeight"=1,
+      "InitialInstanceCount"=1,
+      "InstanceType"="c4.4xlarge"
     )
   )
   expect_equal(sms$endpoint_from_production_variants(..return_value = T), list(
@@ -2581,10 +2584,10 @@ test_that("test_fit_deploy_tags", {
   variant = list(
     list(
       "ModelName"=model_name,
-      "InstanceType"="c4.4xlarge",
-      "InitialInstanceCount"=1,
       "VariantName"="AllTraffic",
-      "InitialVariantWeight"=1
+      "InitialVariantWeight"=1,
+      "InitialInstanceCount"=1,
+      "InstanceType"="c4.4xlarge"
     )
   )
   expect_equal(mock_name_from_base(..return_value = T), list(IMAGE_URI))
