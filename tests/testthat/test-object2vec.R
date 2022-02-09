@@ -28,35 +28,48 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-object2vec-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-object2vec")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-object2vec-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-object2vec-dummy"))
+  sms$.call_args("create_model", "sagemaker-object2vec")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-object2vec-endpoint")
+  sms$.call_args("logs_for_job")
+
+  sms$s3 <- s3_client
+  sms$sagemaker <- sagemaker_client
+
+  return(sms)
+}
 
 test_that("test init required positional", {
-  object2vec = sagemaker.mlcore::Object2Vec$new(
+  object2vec = Object2Vec$new(
     ROLE,
     INSTANCE_COUNT,
     INSTANCE_TYPE,
     EPOCHS,
     ENC0_MAX_SEQ_LEN,
     ENC0_VOCAB_SIZE,
-    sagemaker_session=sagemaker_session)
+    sagemaker_session=sagemaker_session()
+  )
   expect_equal(object2vec$role, COMMON_TRAIN_ARGS$role)
   expect_equal(object2vec$instance_count, INSTANCE_COUNT)
   expect_equal(object2vec$instance_type, COMMON_TRAIN_ARGS$instance_type)
@@ -66,7 +79,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec = do.call(Object2Vec$new, object2vec_args)
 
   expect_equal(object2vec$role, COMMON_TRAIN_ARGS$role)
@@ -78,7 +91,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  object2vec_args = c(sagemaker_session=sagemaker_session,
+  object2vec_args = c(sagemaker_session=sagemaker_session(),
                       enc_dim=1024,
                       mini_batch_size=100,
                       early_stopping_patience=3,
@@ -118,14 +131,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec = do.call(Object2Vec$new, object2vec_args)
 
   expect_equal(object2vec$training_image_uri(), ImageUris$new()$retrieve("object2vec", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec_args$epochs = NULL
   test_param = list(num_topics = "string")
 
@@ -136,7 +149,7 @@ test_that("test required hyper parameters type", {
 })
 
 test_that("test required hyper parameters value", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec_args$enc0_vocab_size = NULL
   test_param = list("enc0_vocab_size"=0,
                     "enc0_vocab_size"=1000000000)
@@ -148,7 +161,7 @@ test_that("test required hyper parameters value", {
 })
 
 test_that("test optional hyper parameters type", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec_args$epochs = NULL
   test_param = list("epochs"="string",
                     "optimizer"=0,
@@ -167,7 +180,7 @@ test_that("test optional hyper parameters type", {
 })
 
 test_that("test error optional hyper parameters value", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec_args$epochs = NULL
   test_param = list("epochs"=0,
                     "epochs"=1000,
@@ -195,7 +208,7 @@ PREFIX = "prefix"
 FEATURE_DIM = 10
 
 test_that("test call fit", {
-  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -210,7 +223,7 @@ test_that("test call fit", {
 })
 
 test_that("test prepare for training none mini batch_size", {
-  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -224,7 +237,7 @@ test_that("test prepare for training none mini batch_size", {
 })
 
 test_that("test prepare for training wrong type mini batch size", {
-  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -237,7 +250,7 @@ test_that("test prepare for training wrong type mini batch size", {
 })
 
 test_that("test prepare for training wrong value lower mini batch size", {
-  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(base_job_name="object2vec", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -250,7 +263,7 @@ test_that("test prepare for training wrong value lower mini batch size", {
 })
 
 test_that("test model image", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -266,7 +279,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  object2vec_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  object2vec_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   object2vec=do.call(Object2Vec$new, object2vec_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),

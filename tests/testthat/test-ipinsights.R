@@ -1,6 +1,7 @@
 # NOTE: This code has been modified from AWS Sagemaker Python: https://github.com/aws/sagemaker-python-sdk/blob/master/tests/unit/test_ipinsights.py
 context("ipinsights")
 
+library(sagemaker.core)
 library(sagemaker.common)
 
 ROLE = "myrole"
@@ -28,25 +29,38 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-ipinsight-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-ipinsight")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-ipinsight-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sms$sagemaker <- sagemaker_client
+  sms$s3 <- s3_client
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-ipinsight-dummy"))
+  sms$.call_args("create_model", "sagemaker-ipinsight")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-ipinsight-endpoint")
+  sms$.call_args("logs_for_job")
+
+  return(sms)
+}
 
 test_that("test init required positional", {
   ipinsights = IPInsights$new(
@@ -55,7 +69,7 @@ test_that("test init required positional", {
     INSTANCE_TYPE,
     NUM_ENTITY_VECTORS,
     VECTOR_DIM,
-    sagemaker_session=sagemaker_session
+    sagemaker_session=sagemaker_session()
   )
   expect_equal(ipinsights$role, COMMON_TRAIN_ARGS$role)
   expect_equal(ipinsights$instance_count, INSTANCE_COUNT)
@@ -65,7 +79,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights = do.call(IPInsights$new, ip_args)
 
   expect_equal(ipinsights$role, COMMON_TRAIN_ARGS$role)
@@ -76,7 +90,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  ip_args = c(sagemaker_session=sagemaker_session,
+  ip_args = c(sagemaker_session=sagemaker_session(),
               batch_metrics_publish_interval=100,
               epochs=10,
               learning_rate=0.001,
@@ -101,14 +115,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights = do.call(IPInsights$new, ip_args)
 
   expect_equal(ipinsights$training_image_uri(), ImageUris$new()$retrieve("ipinsights", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("num_entity_vectors" = "string", "vector_dim" = "string")
 
   for(i in seq_along(test_param)){
@@ -118,7 +132,7 @@ test_that("test required hyper parameters type", {
 })
 
 test_that("test required hyper parameters value", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("num_entity_vectors" = 0,
                     "num_entity_vectors"= 500000001,
                     "vector_dim" = 3,
@@ -131,7 +145,7 @@ test_that("test required hyper parameters value", {
 })
 
 test_that("test optional hyper parameters value", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("batch_metrics_publish_interval" = 0,
                     "epochs" = 0,
                     "learning_rate" = 0,
@@ -156,7 +170,7 @@ FEATURE_DIM = NULL
 MINI_BATCH_SIZE = 200
 
 test_that("test call fit", {
-  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -172,7 +186,7 @@ test_that("test call fit", {
 
 
 test_that("test prepare for training none mini batch_size", {
-  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -186,7 +200,7 @@ test_that("test prepare for training none mini batch_size", {
 })
 
 test_that("test prepare for training wrong type mini batch size", {
-  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -199,7 +213,7 @@ test_that("test prepare for training wrong type mini batch size", {
 })
 
 test_that("test prepare for training wrong value lower mini batch size", {
-  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -212,7 +226,7 @@ test_that("test prepare for training wrong value lower mini batch size", {
 })
 
 test_that("test prepare for training wrong value upper mini batch size", {
-  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(base_job_name="ipinsights", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -225,7 +239,7 @@ test_that("test prepare for training wrong value upper mini batch size", {
 })
 
 test_that("test model image", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -241,7 +255,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  ip_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  ip_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   ipinsights=do.call(IPInsights$new, ip_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),

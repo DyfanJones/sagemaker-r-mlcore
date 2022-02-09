@@ -28,28 +28,40 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-kmeans-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-kmeans")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-kmeans-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+
+  sms$sagemaker <- sagemaker_client
+  sms$s3 <- s3_client
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-kmeans-dummy"))
+  sms$.call_args("create_model", "sagemaker-kmeans")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-kmeans-endpoint")
+  sms$.call_args("logs_for_job")
+
+  return(sms)
+}
 
 test_that("test init required positional", {
-  kmeans = KMeans$new(ROLE, INSTANCE_COUNT, INSTANCE_TYPE, K, sagemaker_session=sagemaker_session)
+  kmeans = KMeans$new(ROLE, INSTANCE_COUNT, INSTANCE_TYPE, K, sagemaker_session=sagemaker_session())
   expect_equal(kmeans$role, COMMON_TRAIN_ARGS$role)
   expect_equal(kmeans$instance_count, INSTANCE_COUNT)
   expect_equal(kmeans$instance_type, COMMON_TRAIN_ARGS$instance_type)
@@ -57,7 +69,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans = do.call(KMeans$new, km_args)
 
   expect_equal(kmeans$role, COMMON_TRAIN_ARGS$role)
@@ -67,7 +79,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  km_args = c(sagemaker_session=sagemaker_session,
+  km_args = c(sagemaker_session=sagemaker_session(),
               init_method="random",
               max_iterations=3,
               tol=0.5,
@@ -96,14 +108,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans = do.call(KMeans$new, km_args)
 
   expect_equal(kmeans$training_image_uri(), ImageUris$new()$retrieve("kmeans", REGION))
 })
 
 test_that("test required hyper parameters type", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("k" = "string")
 
   for(i in seq_along(test_param)){
@@ -113,7 +125,7 @@ test_that("test required hyper parameters type", {
 })
 
 test_that("test required hyper parameters value", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("k" = 0)
 
   for(i in seq_along(test_param)){
@@ -123,7 +135,7 @@ test_that("test required hyper parameters value", {
 })
 
 test_that("test optional hyper parameters type", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("init_method"=0,
                     "max_iterations"="string",
                     "tol"="string",
@@ -140,7 +152,7 @@ test_that("test optional hyper parameters type", {
 })
 
 test_that("test optional hyper parameters value", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list("init_method"="string",
                     "max_iterations"=0,
                     "tol"=-.1,
@@ -162,7 +174,7 @@ FEATURE_DIM = 10
 MINI_BATCH_SIZE = 200
 
 test_that("test call fit", {
-  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -178,7 +190,7 @@ test_that("test call fit", {
 
 
 test_that("test prepare for training no mini batch_size", {
-  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -192,7 +204,7 @@ test_that("test prepare for training no mini batch_size", {
 })
 
 test_that("test prepare for training wrong type mini batch size", {
-  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -205,7 +217,7 @@ test_that("test prepare for training wrong type mini batch size", {
 })
 
 test_that("test prepare for training wrong value lower mini batch size", {
-  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(base_job_name="kmeans", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -218,7 +230,7 @@ test_that("test prepare for training wrong value lower mini batch size", {
 })
 
 test_that("test model image", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -234,7 +246,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  km_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  km_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   kmeans=do.call(KMeans$new, km_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),

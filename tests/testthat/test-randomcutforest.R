@@ -25,25 +25,37 @@ ENDPOINT_DESC = list("EndpointConfigName"= "test-endpoint")
 
 ENDPOINT_CONFIG_DESC = list("ProductionVariants"= list(list("ModelName"= "model-1"), list("ModelName"= "model-2")))
 
-paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
-sagemaker_session <- Mock$new(
-  name = "Session",
-  paws_credentials = paws_mock,
-  paws_region_name=REGION,
-  config=NULL,
-  local_mode=FALSE,
-  s3 = NULL)
+sagemaker_session <- function(){
+  paws_mock <- Mock$new(name = "PawsCredentials", region_name = REGION)
+  sms <- Mock$new(
+    name = "Session",
+    paws_credentials = paws_mock,
+    paws_region_name=REGION,
+    config=NULL,
+    local_mode=FALSE,
+    s3 = NULL
+  )
 
-sagemaker_session$default_bucket <- Mock$new()$return_value(BUCKET_NAME, .min_var = 0)
-sagemaker_session$sagemaker$describe_training_job <- Mock$new()$return_value(DESCRIBE_TRAINING_JOB_RESULT)
-sagemaker_session$sagemaker$describe_endpoint <- Mock$new()$return_value(ENDPOINT_DESC)
-sagemaker_session$sagemaker$describe_endpoint_config <- Mock$new()$return_value(ENDPOINT_CONFIG_DESC)
-sagemaker_session$s3$put_object <- Mock$new()$return_value(NULL)
-sagemaker_session$expand_role <- Mock$new()$return_value(ROLE)
-sagemaker_session$train <- Mock$new()$return_value(list(TrainingJobArn = "sagemaker-randomcutforest-dummy"))
-sagemaker_session$create_model <- Mock$new()$return_value("sagemaker-randomcutforest")
-sagemaker_session$endpoint_from_production_variants <- Mock$new()$return_value("sagemaker-randomcutforest-endpoint")
-sagemaker_session$logs_for_job <- Mock$new()$return_value(NULL)
+  s3_client <- Mock$new()
+  s3_client$.call_args("put_object")
+
+  sagemaker_client <- Mock$new()
+  sagemaker_client$.call_args("describe_training_job", DESCRIBE_TRAINING_JOB_RESULT)
+  sagemaker_client$.call_args("describe_endpoint", ENDPOINT_DESC)
+  sagemaker_client$.call_args("describe_endpoint_config", ENDPOINT_CONFIG_DESC)
+
+  sms$.call_args("default_bucket", BUCKET_NAME)
+  sms$.call_args("expand_role", ROLE)
+  sms$.call_args("train", list(TrainingJobArn = "sagemaker-randomcutforest-dummy"))
+  sms$.call_args("create_model", "sagemaker-randomcutforest")
+  sms$.call_args("endpoint_from_production_variants", "sagemaker-randomcutforest-endpoint")
+  sms$.call_args("logs_for_job")
+
+  sms$s3 <- s3_client
+  sms$sagemaker <- sagemaker_client
+
+  return(sms)
+}
 
 test_that("test init required positional", {
   randomcutforest = RandomCutForest$new(
@@ -53,7 +65,7 @@ test_that("test init required positional", {
     NUM_SAMPLES_PER_TREE,
     NUM_TREES,
     EVAL_METRICS,
-    sagemaker_session=sagemaker_session
+    sagemaker_session=sagemaker_session()
   )
   expect_equal(randomcutforest$role, ROLE)
   expect_equal(randomcutforest$instance_count, INSTANCE_COUNT)
@@ -64,7 +76,7 @@ test_that("test init required positional", {
 })
 
 test_that("test init required named", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest = do.call(RandomCutForest$new, rf_args)
 
   expect_equal(randomcutforest$role, COMMON_TRAIN_ARGS$role)
@@ -73,7 +85,7 @@ test_that("test init required named", {
 })
 
 test_that("test all hyperparameters", {
-  rf_args = c(sagemaker_session=sagemaker_session,
+  rf_args = c(sagemaker_session=sagemaker_session(),
               num_trees=NUM_TREES,
               num_samples_per_tree=NUM_SAMPLES_PER_TREE,
               eval_metrics=list(EVAL_METRICS),
@@ -87,14 +99,14 @@ test_that("test all hyperparameters", {
 })
 
 test_that("test image", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest = do.call(RandomCutForest$new, rf_args)
 
   expect_equal(randomcutforest$training_image_uri(), ImageUris$new()$retrieve("randomcutforest", REGION))
 })
 
 test_that("test iterable hyper parameters type", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list(num_trees="Dummy",
                     num_samples_per_tree="DUMMY")
 
@@ -105,7 +117,7 @@ test_that("test iterable hyper parameters type", {
 })
 
 test_that("test optional hyper parameters value", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   test_param = list(num_trees=49,
                     num_trees=1001,
                     num_samples_per_tree=0,
@@ -123,7 +135,7 @@ MAX_FEATURE_DIM = 10000
 MINI_BATCH_SIZE = 1000
 
 test_that("test prepare for training no mini batch_size", {
-  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest=do.call(RandomCutForest$new, rf_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -137,7 +149,7 @@ test_that("test prepare for training no mini batch_size", {
 })
 
 test_that("test prepare for training no mini batch_size", {
-  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest=do.call(RandomCutForest$new, rf_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -150,7 +162,7 @@ test_that("test prepare for training no mini batch_size", {
 })
 
 test_that("test prepare for training feature dim greater than max allowed", {
-  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(base_job_name="randomcutforest", sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest=do.call(RandomCutForest$new, rf_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -162,7 +174,7 @@ test_that("test prepare for training feature dim greater than max allowed", {
 })
 
 test_that("test model image", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest=do.call(RandomCutForest$new, rf_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),
@@ -178,7 +190,7 @@ test_that("test model image", {
 })
 
 test_that("test predictor type", {
-  rf_args = c(sagemaker_session=sagemaker_session, ALL_REQ_ARGS)
+  rf_args = c(sagemaker_session=sagemaker_session(), ALL_REQ_ARGS)
   randomcutforest=do.call(RandomCutForest$new, rf_args)
   data = RecordSet$new(
     sprintf("s3://%s/%s",BUCKET_NAME, PREFIX),

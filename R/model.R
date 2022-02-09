@@ -473,7 +473,7 @@ Model = R6Class("Model",
 
       self$.create_sagemaker_model(instance_type, accelerator_type, tags)
 
-      serverless_inference_config_dict = (
+      serverless_inference_config_list = (
         if (is_serverless) serverless_inference_config$to_request_list() else NULL
       )
       prod_variant = production_variant(
@@ -1047,15 +1047,21 @@ FrameworkModel = R6Class("FrameworkModel",
        self$key_prefix, self$name, self$image_uri
      )
      private$.upload_code(deploy_key_prefix)
-     deploy_env = list(self$env)
+     deploy_env = as.list(self$env)
      deploy_env = modifyList(deploy_env, private$.framework_env_vars())
-     return(container_def(self$image_uri, self$model_data, deploy_env))
+     return(container_def(
+       self$image_uri,
+       self$repacked_model_data %||% self$model_data,
+       deploy_env,
+       image_config=self$image_config
+       )
+     )
    }
   ),
   private = list(
    .upload_code = function(key_prefix, repack=FALSE){
       local_code = get_config_value("local.local_code", self$sagemaker_session$config)
-      if ((isTRUE(self$sagemaker_session$local_mode) && !is.null(local_code)) || self$entry_point){
+      if ((isTRUE(self$sagemaker_session$local_mode) && !is.null(local_code)) || is.null(self$entry_point)){
         self$uploaded_code = NULL
       } else if (isFALSE(repack)){
         bucket = self$bucket %||% self$sagemaker_session$default_bucket()
@@ -1114,7 +1120,7 @@ FrameworkModel = R6Class("FrameworkModel",
        toupper(model_parameters$CONTAINER_LOG_LEVEL_PARAM_NAME),
        toupper(model_parameters$SAGEMAKER_REGION_PARAM_NAME))
      return(output)
-   }
+    }
   ),
   lock_objects = F
 )

@@ -1304,9 +1304,7 @@ EstimatorBase = R6Class("EstimatorBase",
         train_args$tensorboard_output_config = self$tensorboard_output_config$to_request_list()
 
       train_args = private$.add_spot_checkpoint_args(local_mode, train_args)
-
-      if (isTRUE(self$enable_sagemaker_metrics))
-        train_args$enable_sagemaker_metrics = self$enable_sagemaker_metrics
+      train_args$enable_sagemaker_metrics = self$enable_sagemaker_metrics
 
       if (!islistempty(self$profiler_rule_configs))
         train_args$profiler_rule_configs = self$profiler_rule_configs
@@ -1779,14 +1777,16 @@ Estimator = R6Class("Estimator",
         predictor_cls = Predictor
       }
 
-      args = list(
-        role = role %||% self$role,
-        image_uri = image_uri %||% self$training_image_uri(),
-        vpc_config = self$get_vpc_config(vpc_config_override),
-        sagemaker_session = self$sagemaker_session,
-        model_data = self$model_data,
-        ...)
-
+      args = append(
+        list(
+          role = role %||% self$role,
+          image_uri = image_uri %||% self$training_image_uri(),
+          vpc_config = self$get_vpc_config(vpc_config_override),
+          sagemaker_session = self$sagemaker_session,
+          model_data = self$model_data
+          ),
+        kwargs
+      )
       args$predictor_cls = predictor_cls
 
       if (!("enable_network_isolation" %in% names(args)))
@@ -2345,7 +2345,7 @@ Framework = R6Class("Framework",
       if (isFALSE(self$debugger_hook_config)){
         if (!is.null(self$environment))
           self$environment = list()
-        self$environment[[DEBUGGER_FLAG]] = "0"
+        self$environment[[pkg_method("DEBUGGER_FLAG","sagemaker.common")]] = "0"
       }
     },
 
@@ -2410,7 +2410,7 @@ Framework = R6Class("Framework",
       current_hyperparameters = hyperparameters
       if (!is.null(current_hyperparameters)){
         hyperparameters=lapply(current_hyperparameters, function(v) {
-          if(inherits(v, c("Parameter", "Expression", "Properties", "list")))
+          if(inherits(v, c("Parameter", "Expression", "Properties", "list", "logical")))
             jsonlite::toJSON(v, auto_unbox = TRUE) else as.character(v)})
       }
       return(hyperparameters)
