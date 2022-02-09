@@ -107,6 +107,6 @@ mock_r6_private = function(r6_class, private_method, mock_fun){
 }
 
 with_mock = function(..., eval_env = parent.frame()){
-  mockthat::with_mock(..., eval_env = eval_env, mock_env = "sagemaker.core")
+  mockthat::with_mock(..., eval_env = eval_env, mock_env = "sagemaker.mlcore")
 }
 

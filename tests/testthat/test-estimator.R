@@ -2841,7 +2841,7 @@ test_that("test_generic_to_fit_with_sagemaker_metrics_disabled", {
   e$fit()
 
   args = sms$train(..return_value = TRUE)
-  expect_false("enable_sagemaker_metrics" %in% names(args))
+  expect_false(args[["enable_sagemaker_metrics"]])
 })
 
 test_that("test_generic_to_deploy", {
