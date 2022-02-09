@@ -50,6 +50,7 @@ jobs:
 
           # install sageamker dev packages
           pak::pkg_install("dyfanjones/sagemaker-r-core")
+          pak::pkg_install("dyfanjones/sagemaker-r-debugger")
           pak::pkg_install("dyfanjones/sagemaker-r-common")
 
           # Extra Packages
