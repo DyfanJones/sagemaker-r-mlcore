@@ -37,6 +37,7 @@ CODECOMMIT_REPO_SSH = "ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/tes
 CODECOMMIT_BRANCH = "master"
 REPO_DIR = "/tmp/repo_dir"
 ENV_INPUT = list("env_key1"="env_val1", "env_key2"="env_val2", "env_key3"="env_val3")
+Sys.setenv("AWS_REGION" = REGION)
 
 DESCRIBE_TRAINING_JOB_RESULT = list("ModelArtifacts"=list("S3ModelArtifacts"=MODEL_DATA))
 
@@ -3083,7 +3084,10 @@ test_that("test_register_default_image", {
     "marketplace_cert"=FALSE,
     "model_package_name"=model_package_name
   )
-  expect_equal(sms$create_model_package_from_containers(..return_value = T), expected_create_model_package_request)
+  expect_equal(
+    sms$create_model_package_from_containers(..return_value = T),
+    expected_create_model_package_request
+  )
 })
 
 test_that("test_register_inference_image", {
