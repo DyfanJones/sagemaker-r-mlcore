@@ -1,7 +1,7 @@
 Package: sagemaker.mlcore
 Type: Package
 Title: sagemaker machine learning core classes and methods
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(person("Dyfan", "Jones", email="dyfan.r.jones@gmail.com", role= c("aut", "cre")),
              person("Amazon.com, Inc.", role = "cph"))
 Description: `sagemaker` machine learning core classes and methods.
@@ -18,7 +18,7 @@ Imports:
 Suggests:
     crayon,
     Matrix,
-    sparsio,
+    readsparse,
     readr,
     RProtoBuf,
     reticulate,
