@@ -42,7 +42,7 @@ jobs:
           pak::pkg_install("mockthat")
           pak::pkg_install("crayon")
           pak::pkg_install("Matrix")
-          pak::pkg_install("sparsio")
+          pak::pkg_install("readsparse")
           pak::pkg_install("readr")
           pak::pkg_install("RProtoBuf")
           pak::pkg_install("reticulate")
