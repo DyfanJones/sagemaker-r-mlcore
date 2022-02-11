@@ -42,7 +42,7 @@ jobs:
           pak::pkg_install("mockthat")
           pak::pkg_install("crayon")
           pak::pkg_install("Matrix")
-          pak::pkg_install("sparsio")
+          pak::pkg_install("readsparse")
           pak::pkg_install("readr")
           pak::pkg_install("RProtoBuf")
           pak::pkg_install("reticulate")
@@ -55,6 +55,12 @@ jobs:
 
           # Extra Packages
           pak::pkg_install("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Install Miniconda
+        run: |
+          reticulate::install_miniconda()
+          reticulate::py_install(packages=c("numpy","scipy"), envname = 'r-reticulate', method = "conda")
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v1

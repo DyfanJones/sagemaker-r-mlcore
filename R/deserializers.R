@@ -4,8 +4,8 @@
 #' @include r_utils.R
 
 #' @import R6
-#' @import jsonlite
 #' @import data.table
+#' @importFrom jsonlite parse_json stream_in
 
 #' @title Default BaseDeserializer Class
 #' @description All BaseDeserializer are children of this class. If a custom
@@ -18,7 +18,9 @@ BaseDeserializer = R6Class("BaseDeserializer",
     #' @param stream (botocore.response.StreamingBody): Data to be deserialized.
     #' @param content_type (str): The MIME type of the data.
     #' @return object: The data deserialized into an object.
-    deserialize = function(stream, content_type) {stop("I'm an abstract interface method", call. = F)},
+    deserialize = function(stream, content_type){
+      NotImplementedError$new("I'm an abstract interface method")
+    },
 
     #' @description format class
     format = function(){
@@ -29,7 +31,9 @@ BaseDeserializer = R6Class("BaseDeserializer",
 
     #' @field ACCEPT
     #' The content types that are expected from the inference endpoint.
-    ACCEPT = function(){}
+    ACCEPT = function(){
+      NotImplementedError$new("I'm an abstract interface method")
+    }
   )
 )
 
@@ -87,10 +91,12 @@ StringDeserializer = R6Class("StringBaseDeserializer",
     #' @param stream raw data to be deserialize
     #' @param content_type (str): The MIME type of the data.
     deserialize = function(stream, content_type) {
-      obj <- stringi::stri_encode(stream, "",self$encoding)
+      con = rawConnection(stream)
+      on.exit(close(con))
+      obj = readLines(con, encoding = self$encoding, warn = FALSE)
       return(obj)
-      }
-    )
+    }
+  )
 )
 
 #' @title BytesDerializer Class
@@ -139,7 +145,7 @@ CSVDeserializer = R6Class("CSVDeserializer",
       TempFile = tempfile()
       write_bin(stream, TempFile)
       on.exit(unlink(TempFile))
-      return(list(fread(TempFile, encoding = self$encoding, sep = ",", data.table = FALSE, showProgress = FALSE)))
+      return(fread(TempFile, encoding = self$encoding, sep = ",", data.table = FALSE, showProgress = FALSE))
     }
   )
 )
@@ -174,7 +180,7 @@ NumpyDeserializer = R6Class("NumpyDeserializer",
                           accept="application/x-npy",
                           allow_pickle=TRUE){
       if(!requireNamespace('reticulate', quietly=TRUE))
-        stop('Please install `reticulate` package and try again', call. = F)
+        SagemakerError$new('Please install `reticulate` package and try again')
       super$initialize(accept = accept)
       self$dtype = dtype
       self$allow_pickle = allow_pickle
@@ -205,12 +211,10 @@ NumpyDeserializer = R6Class("NumpyDeserializer",
 
         if(content_type == "application/x-npy"){
           return(self$np$load(TempFile, allow_pickle = self$allow_pickle))
-          }
-        })
+        }
+      })
 
-      stop(sprintf("%s cannot read content type %s.",
-                   class(self)[1L], content_type),
-           call. = F)
+      ValueError$new(sprintf("%s cannot read content type %s.", class(self)[1L], content_type))
     }
   )
 )
@@ -238,8 +242,8 @@ JSONDeserializer = R6Class("JSONDeserializer",
       on.exit(close(con))
       data = parse_json(con)
       return(data)
-      }
-    )
+    }
+  )
 )
 
 #' @title JSONDeserializer Class
@@ -254,7 +258,7 @@ JSONLinesDeserializer = R6Class("JSONDeserializer",
     #'              is expected from the inference endpoint (default: ("text/csv","application/json")).
     initialize = function(accept="application/json"){
       super$initialize(accept = accept)
-      },
+    },
 
     #' @description  Deserialize JSON lines data from an inference endpoint.
     #'               See https://docs.python.org/3/library/json.html#py-to-json-table to
@@ -267,8 +271,8 @@ JSONLinesDeserializer = R6Class("JSONDeserializer",
       on.exit(close(con))
       data = stream_in(con, verbose = FALSE)
       return(data)
-      }
-    )
+    }
+  )
 )
 
 #' @title DataTableDeserializer Class
@@ -313,7 +317,7 @@ DataTableDeserializer = R6Class("DataTableDeserializer",
         return(data)
       }
 
-      stop(sprintf("%s cannot read content type %s.",content_type), call. = F)
+      ValueError$new(sprintf("%s cannot read content type %s.",content_type))
     }
   )
 )
@@ -337,7 +341,7 @@ TibbleDeserializer = R6Class("TibbleDeserializer",
                           accept=c("text/csv", "application/json")){
       super$initialize(accept = accept)
       if(!requireNamespace('readr', quietly=TRUE))
-        stop('Please install `readr` package and try again', call. = F)
+        SagemakerError$new('Please install `readr` package and try again')
       self$encoding = encoding
     },
 
@@ -357,13 +361,13 @@ TibbleDeserializer = R6Class("TibbleDeserializer",
         on.exit(close(con))
 
         if(!requireNamespace('tibble', quietly=TRUE))
-          stop('Please install `tibble` package and try again', call. = F)
+          SagemakerError$new('Please install `tibble` package and try again')
 
         data = tibble::as_tibble(fromJSON(con))
         return(data)
       }
 
-      stop(sprintf("%s cannot read content type %s.",content_type), call. = F)
+      ValueError$new(sprintf("%s cannot read content type %s.",content_type))
     }
   )
 )
