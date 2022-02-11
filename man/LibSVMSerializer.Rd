@@ -58,8 +58,8 @@ Serialize data of various formats to a LibSVM-formatted string.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{(object): Data to be serialized. Can be a string or a
-file-like object.}
+\item{\code{data}}{(object): Data to be serialized. Can be a string, a
+file-like object, sparse matrix, or a list (format: list(<sparse matrix>, <label>)).}
 }
 \if{html}{\out{</div>}}
 }

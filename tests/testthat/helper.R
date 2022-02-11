@@ -1,3 +1,19 @@
+# check if python module exist or not
+skip_if_no_python <- function() {
+  if (!reticulate::py_available(initialize = TRUE))
+    testthat::skip("Python bindings not available for testing")
+}
+
+skip_if_no_numpy <- function() {
+  have_numpy <- reticulate::py_module_available("numpy")
+  if(!have_numpy) testthat::skip("numpy not available for testing")
+}
+
+skip_if_no_scipy <- function() {
+  have_numpy <- reticulate::py_module_available("scipy")
+  if(!have_numpy) testthat::skip("scipy not available for testing")
+}
+
 # Class to mock R6 classes
 # used for testing only
 Mock <- R6::R6Class("Mock",
