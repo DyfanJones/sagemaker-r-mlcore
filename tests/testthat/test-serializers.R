@@ -2,7 +2,6 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/tests/unit/sagemaker/test_serializers.py
 
 DATA_DIR = file.path(getwd(), "data")
-DATA_DIR = file.path("~/Documents/Packages/sagemaker-r-mlcore/tests/testthat", "data")
 
 test_that("test_csv_serializer_str", {
   original = "1,2,3"
