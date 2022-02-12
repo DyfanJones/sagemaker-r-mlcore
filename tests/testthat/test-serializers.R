@@ -72,23 +72,24 @@ test_that("test_csv_serializer_csv_reader", {
   expect_equal(result, validation_data)
 })
 
+csv_bin = function(data){
+  f = tempfile()
+  on.exit(unlink(f))
+  fwrite(data, f, col.names = FALSE, showProgress = FALSE)
+  return(readBin(f, "raw", n = file.size(f)))
+}
+
 test_that("test_csv_serializer_matrix", {
-  csv_file_path = file.path(DATA_DIR, "with_integers.csv")
-  validation_data = readBin(csv_file_path, "raw", n = file.size(csv_file_path))
-  result = CSVSerializer$new()$serialize(matrix(1:9, ncol=3, byrow =T))
-  cat("\nDebug print\n")
-  print(rawToChar(result))
-  print(rawToChar(validation_data))
+  data = matrix(1:9, ncol=3, byrow =T)
+  validation_data = csv_bin(data)
+  result = CSVSerializer$new()$serialize(data)
   expect_equal(result, validation_data)
 })
 
 test_that("test_csv_serializer_dataframe", {
-  csv_file_path = file.path(DATA_DIR, "with_integers.csv")
-  validation_data = readBin(csv_file_path, "raw", n = file.size(csv_file_path))
-  result = CSVSerializer$new()$serialize(as.data.frame(matrix(1:9, ncol=3, byrow =T)))
-  cat("\nDebug print\n")
-  print(rawToChar(result))
-  print(rawToChar(validation_data))
+  data = as.data.frame(matrix(1:9, ncol=3, byrow =T))
+  validation_data = csv_bin(data)
+  result = CSVSerializer$new()$serialize(data)
   expect_equal(result, validation_data)
 })
 
