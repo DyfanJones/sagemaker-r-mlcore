@@ -76,6 +76,9 @@ test_that("test_csv_serializer_matrix", {
   csv_file_path = file.path(DATA_DIR, "with_integers.csv")
   validation_data = readBin(csv_file_path, "raw", n = file.size(csv_file_path))
   result = CSVSerializer$new()$serialize(matrix(1:9, ncol=3, byrow =T))
+  cat("\nDebug print\n")
+  print(rawToChar(result))
+  print(rawToChar(validation_data))
   expect_equal(result, validation_data)
 })
 
@@ -83,6 +86,9 @@ test_that("test_csv_serializer_dataframe", {
   csv_file_path = file.path(DATA_DIR, "with_integers.csv")
   validation_data = readBin(csv_file_path, "raw", n = file.size(csv_file_path))
   result = CSVSerializer$new()$serialize(as.data.frame(matrix(1:9, ncol=3, byrow =T)))
+  cat("\nDebug print\n")
+  print(rawToChar(result))
+  print(rawToChar(validation_data))
   expect_equal(result, validation_data)
 })
 
