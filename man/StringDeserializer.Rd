@@ -6,6 +6,28 @@
 \description{
 Deserialize raw data stream into a character string
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{StringBaseDeserializer}
 }
@@ -45,7 +67,7 @@ Initialize a ``StringDeserializer`` instance.
 \describe{
 \item{\code{encoding}}{(str): The string encoding to use (default: UTF-8).}
 
-\item{\code{accept}}{(union[str, tuple[str]]): The MIME type (or tuple of allowable MIME types) that
+\item{\code{accept}}{(str): The MIME type (or tuple of allowable MIME types) that
 is expected from the inference endpoint (default: "application/json").}
 }
 \if{html}{\out{</div>}}

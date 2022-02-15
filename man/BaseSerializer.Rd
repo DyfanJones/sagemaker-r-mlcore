@@ -7,6 +7,28 @@
 All serializer are children of this class. If a custom
               serializer is desired, inherit this class.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{

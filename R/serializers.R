@@ -15,6 +15,7 @@ connection_value = function(con){
 #' @title Default BaseSerializer Class
 #' @description  All serializer are children of this class. If a custom
 #'               serializer is desired, inherit this class.
+#' @family serializer
 #' @export
 BaseSerializer = R6Class("BaseSerializer",
   public = list(
@@ -41,9 +42,10 @@ BaseSerializer = R6Class("BaseSerializer",
 )
 
 #' @title Abstract base class for creation of new serializers.
-#' @description This class extends the API of :class:~`sagemaker.serializers.BaseSerializer` with more
+#' @description This class extends the API of \code{BaseSerializer} with more
 #'              user-friendly options for setting the Content-Type header, in situations where it can be
 #'              provided at init and freely updated.
+#' @family serializer
 #' @export
 SimpleBaseSerializer = R6Class("SimpleBaseSerializer",
    inherit = BaseSerializer,
@@ -53,7 +55,7 @@ SimpleBaseSerializer = R6Class("SimpleBaseSerializer",
       #' The data MIME type
       content_type = NULL,
 
-      #' @description Initialize a ``SimpleBaseSerializer`` instance.
+      #' @description Initialize a \code{SimpleBaseSerializer} instance.
       #' @param content_type (str): The MIME type to signal to the inference endpoint when sending
       #'              request data (default: "application/json").
       initialize = function(content_type = "application/json"){
@@ -83,11 +85,12 @@ SimpleBaseSerializer = R6Class("SimpleBaseSerializer",
 
 #' @title CSVSerializer Class
 #' @description Make Raw data using text/csv format
+#' @family serializer
 #' @export
 CSVSerializer = R6Class("CSVSerializer",
   inherit = SimpleBaseSerializer,
   public = list(
-    #' @description Initialize a ``CSVSerializer`` instance.
+    #' @description Initialize a \code{CSVSerializer} instance.
     #' @param content_type (str): The MIME type to signal to the inference endpoint when sending
     #'              request data (default: "text/csv").
     initialize = function(content_type="text/csv"){
@@ -134,6 +137,7 @@ CSVSerializer = R6Class("CSVSerializer",
 #' @description Serialize data of various formats to a numpy npy file format.
 #'              This serializer class uses python numpy package to serialize,
 #'              R objects through the use of the `reticulate` package.
+#' @family serializer
 #' @export
 NumpySerializer = R6Class("NumpySerializer",
   inherit = SimpleBaseSerializer,
@@ -147,7 +151,7 @@ NumpySerializer = R6Class("NumpySerializer",
     #' Initialized python numpy package
     np = NULL,
 
-    #' @description Initialize a ``NumpySerializer`` instance.
+    #' @description Initialize a \code{NumpySerializer} instance.
     #' @param content_type (str): The MIME type to signal to the inference endpoint when sending
     #'              request data (default: "application/x-npy").
     #' @param dtype (str): The `dtype` of the data. `reticulate` auto maps to python, please set R class
@@ -208,6 +212,7 @@ NumpySerializer = R6Class("NumpySerializer",
 
 #' @title JSONSerializer Class
 #' @description Serialize data to a JSON formatted string.
+#' @family serializer
 #' @export
 JSONSerializer = R6Class("JSONSerializer",
   inherit = SimpleBaseSerializer,
@@ -235,7 +240,8 @@ JSONSerializer = R6Class("JSONSerializer",
 
 #' @title Serialize data by returning data without modification.
 #' @description This serializer may be useful if, for example, you're sending raw bytes such as from an image
-#'              file's .read() method.
+#'              file's method.
+#' @family serializer
 #' @export
 IdentitySerializer = R6Class("IdentitySerializer",
   inherit = SimpleBaseSerializer,
@@ -259,6 +265,7 @@ IdentitySerializer = R6Class("IdentitySerializer",
 
 #' @title JSONLinesSerializer Class
 #' @description Serialize data to a JSON Lines formatted string.
+#' @family serializer
 #' @export
 JSONLinesSerializer = R6Class("IdentitySerializer",
   inherit = SimpleBaseSerializer,
@@ -295,6 +302,7 @@ JSONLinesSerializer = R6Class("IdentitySerializer",
 
 #' @title SparseMatrixSerializer Class
 #' @description Serialize a sparse matrix to a buffer using the .npz format.
+#' @family serializer
 #' @export
 SparseMatrixSerializer = R6Class("SparseMatrixSerializer",
   inherit = SimpleBaseSerializer,
@@ -342,6 +350,7 @@ SparseMatrixSerializer = R6Class("SparseMatrixSerializer",
 #'              <label> <index1>:<value1> <index2>:<value2> ...
 #'              It is suitable for sparse datasets since it does not store zero-valued
 #'              features.
+#' @family serializer
 #' @export
 LibSVMSerializer = R6Class("LibSVMSerializer",
   inherit = SimpleBaseSerializer,

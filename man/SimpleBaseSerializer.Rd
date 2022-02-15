@@ -4,10 +4,32 @@
 \alias{SimpleBaseSerializer}
 \title{Abstract base class for creation of new serializers.}
 \description{
-This class extends the API of :class:~`sagemaker.serializers.BaseSerializer` with more
+This class extends the API of \code{BaseSerializer} with more
              user-friendly options for setting the Content-Type header, in situations where it can be
              provided at init and freely updated.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super class}{
 \code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{SimpleBaseSerializer}
 }
@@ -44,7 +66,7 @@ This class extends the API of :class:~`sagemaker.serializers.BaseSerializer` wit
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Initialize a ``SimpleBaseSerializer`` instance.
+Initialize a \code{SimpleBaseSerializer} instance.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{SimpleBaseSerializer$new(content_type = "application/json")}\if{html}{\out{</div>}}
 }

@@ -6,6 +6,28 @@
 \description{
 Serialize data to a JSON Lines formatted string.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{IdentitySerializer}
 }

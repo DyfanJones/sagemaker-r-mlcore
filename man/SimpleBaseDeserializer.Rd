@@ -4,10 +4,32 @@
 \alias{SimpleBaseDeserializer}
 \title{Abstract base class for creation of new deserializers.}
 \description{
-This class extends the API of :class:~`sagemaker.deserializers.BaseDeserializer` with more
-             user-friendly options for setting the ACCEPT content type header, in situations where it can be
-             provided at init and freely updated.
+This class extends the API of \code{BaseDeserializer} with more
+             user-friendly options for setting the ACCEPT content type header,
+             in situations where it can be provided at init and freely updated.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super class}{
 \code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{SimpleBaseDeserializer}
 }

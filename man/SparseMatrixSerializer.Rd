@@ -6,6 +6,28 @@
 \description{
 Serialize a sparse matrix to a buffer using the .npz format.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{SparseMatrixSerializer}
 }
