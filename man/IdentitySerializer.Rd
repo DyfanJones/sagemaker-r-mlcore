@@ -5,8 +5,30 @@
 \title{Serialize data by returning data without modification.}
 \description{
 This serializer may be useful if, for example, you're sending raw bytes such as from an image
-             file's .read() method.
+             file's method.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{IdentitySerializer}
 }

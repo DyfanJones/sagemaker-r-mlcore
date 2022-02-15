@@ -5,11 +5,12 @@
 
 #' @import R6
 #' @import data.table
-#' @importFrom jsonlite parse_json stream_in
+#' @importFrom jsonlite fromJSON stream_in
 
 #' @title Default BaseDeserializer Class
 #' @description All BaseDeserializer are children of this class. If a custom
 #'              BaseDeserializer is desired, inherit this class.
+#' @family serializer
 #' @export
 BaseDeserializer = R6Class("BaseDeserializer",
   public = list(
@@ -38,9 +39,10 @@ BaseDeserializer = R6Class("BaseDeserializer",
 )
 
 #' @title Abstract base class for creation of new deserializers.
-#' @description This class extends the API of :class:~`sagemaker.deserializers.BaseDeserializer` with more
-#'              user-friendly options for setting the ACCEPT content type header, in situations where it can be
-#'              provided at init and freely updated.
+#' @description This class extends the API of \code{BaseDeserializer} with more
+#'              user-friendly options for setting the ACCEPT content type header,
+#'              in situations where it can be provided at init and freely updated.
+#' @family serializer
 #' @export
 SimpleBaseDeserializer = R6Class("SimpleBaseDeserializer",
   inherit = BaseDeserializer,
@@ -69,6 +71,7 @@ SimpleBaseDeserializer = R6Class("SimpleBaseDeserializer",
 
 #' @title StringBaseDeserializer Class
 #' @description  Deserialize raw data stream into a character string
+#' @family serializer
 #' @export
 StringDeserializer = R6Class("StringBaseDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -80,7 +83,7 @@ StringDeserializer = R6Class("StringBaseDeserializer",
 
     #' @description Initialize a ``StringDeserializer`` instance.
     #' @param encoding (str): The string encoding to use (default: UTF-8).
-    #' @param accept (union[str, tuple[str]]): The MIME type (or tuple of allowable MIME types) that
+    #' @param accept (str): The MIME type (or tuple of allowable MIME types) that
     #'              is expected from the inference endpoint (default: "application/json").
     initialize = function(encoding="UTF-8", accept = "application/json"){
       super$initialize(accept = accept)
@@ -101,13 +104,14 @@ StringDeserializer = R6Class("StringBaseDeserializer",
 
 #' @title BytesDerializer Class
 #' @description Deserialize a stream of bytes into a bytes object.
+#' @family serializer
 #' @export
 BytesDeserializer = R6Class("BytesDeserializer",
   inherit = SimpleBaseDeserializer,
   public = list(
 
     #' @description Read a stream of bytes returned from an inference endpoint.
-    #' @param stream (botocore.response.StreamingBody): A stream of bytes.
+    #' @param stream (raw): A stream of bytes.
     #' @param content_type (str): The MIME type of the data.
     #' @return bytes: The bytes object read from the stream.
     deserialize = function(stream, content_type){
@@ -117,9 +121,11 @@ BytesDeserializer = R6Class("BytesDeserializer",
 )
 
 #' @title Deserialize a stream of bytes into a list of lists.
-#' @description Consider using :class:~`sagemaker.deserializers.NumpyDeserializer` or
-#'              :class:~`sagemaker.deserializers.PandasDeserializer` instead, if you'd like to convert text/csv
+#' @description Consider using \code{NumpyDeserializer} or
+#'              \code{DataTableDeserializer} or \code{TibbleDeserializer} instead,
+#'              if you'd like to convert text/csv
 #'              responses directly into other data types.
+#' @family serializer
 #' @export
 CSVDeserializer = R6Class("CSVDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -138,14 +144,16 @@ CSVDeserializer = R6Class("CSVDeserializer",
       self$encoding = encoding
       },
 
-    #' @description  Takes raw data stream and deserializes it.
+    #' @description Takes raw data stream and deserializes it.
     #' @param stream raw data to be deserialize
     #' @param content_type (str): The MIME type of the data.
+    #' @return list: The data deserialized into a list of lists representing the
+    #'              contents of a CSV file.
     deserialize = function(stream, content_type) {
-      TempFile = tempfile()
-      write_bin(stream, TempFile)
-      on.exit(unlink(TempFile))
-      return(fread(TempFile, encoding = self$encoding, sep = ",", data.table = FALSE, showProgress = FALSE))
+      con = rawConnection(stream)
+      on.exit(close(con))
+      obj = readLines(con, warn = F, encoding = "UTF-8")
+      return(strsplit(obj, ","))
     }
   )
 )
@@ -154,6 +162,7 @@ CSVDeserializer = R6Class("CSVDeserializer",
 #' @description Deserialize a stream of data in the .npy or UTF-8 CSV/JSON format.
 #'              This serializer class uses python numpy package to deserialize,
 #'              R objects through the use of the `reticulate` package.
+#' @family serializer
 #' @export
 NumpyDeserializer = R6Class("NumpyDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -190,27 +199,36 @@ NumpyDeserializer = R6Class("NumpyDeserializer",
     #' @description Deserialize data from an inference endpoint into a NumPy array.
     #' @param stream (botocore.response.StreamingBody): Data to be deserialized.
     #' @param content_type (str): The MIME type of the data.
-    #' @return matrix: The data deserialized into a NumPy array.
+    #' @return matrix: The data deserialized into a R matrix/array.
     deserialize = function(stream, content_type){
       if(content_type != "application/json"){
-        TempFile = tempfile()
-        write_bin(stream, TempFile)
-        on.exit(unlink(TempFile))
+        f = tempfile()
+        write_bin(stream, f)
+        on.exit(unlink(f))
       }
 
       tryCatch({
         if(content_type == "text/csv"){
-          return(as.matrix(fread(TempFile, sep = ",", encoding = self$encoding, showProgress = FALSE)))
+          obj = t(as.matrix(
+            fread(f, sep = ",", encoding = "UTF-8", showProgress = FALSE, header = FALSE)
+          ))
+          rownames(obj) <- NULL
+          attr(obj, "dimnames") <- NULL
+          return(obj)
         }
 
         if(content_type == "application/json"){
           con = rawConnection(stream)
           on.exit(close(con))
-          data = as.matrix(parse_json(con))
+          return(as.array(fromJSON(
+            con,
+            simplifyDataFrame = FALSE,
+            simplifyMatrix = FALSE)
+          ))
         }
 
         if(content_type == "application/x-npy"){
-          return(self$np$load(TempFile, allow_pickle = self$allow_pickle))
+          return(self$np$load(f, allow_pickle = self$allow_pickle))
         }
       })
 
@@ -221,6 +239,7 @@ NumpyDeserializer = R6Class("NumpyDeserializer",
 
 #' @title JSONDeserializer Class
 #' @description Deserialize JSON data from an inference endpoint into a R object.
+#' @family serializer
 #' @export
 JSONDeserializer = R6Class("JSONDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -240,14 +259,18 @@ JSONDeserializer = R6Class("JSONDeserializer",
     deserialize = function(stream, content_type) {
       con = rawConnection(stream)
       on.exit(close(con))
-      data = parse_json(con)
-      return(data)
+      return(fromJSON(
+        con,
+        simplifyDataFrame = FALSE,
+        simplifyMatrix = FALSE)
+      )
     }
   )
 )
 
 #' @title JSONDeserializer Class
 #' @description Deserialize JSON lines data from an inference endpoint.
+#' @family serializer
 #' @export
 JSONLinesDeserializer = R6Class("JSONDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -277,6 +300,7 @@ JSONLinesDeserializer = R6Class("JSONDeserializer",
 
 #' @title DataTableDeserializer Class
 #' @description Deserialize CSV or JSON data from an inference endpoint into a data.table.
+#' @family serializer
 #' @export
 DataTableDeserializer = R6Class("DataTableDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -304,10 +328,10 @@ DataTableDeserializer = R6Class("DataTableDeserializer",
     deserialize = function(stream, content_type){
 
       if(content_type == "text/csv"){
-        TempFile = tempfile()
-        write_bin(stream, TempFile)
-        on.exit(unlink(TempFile))
-        return(fread(TempFile, encoding = self$encoding, sep = ",", showProgress = FALSE))
+        f = tempfile()
+        write_bin(stream, f)
+        on.exit(unlink(f))
+        return(fread(f, encoding = self$encoding, sep = ",", showProgress = FALSE))
       }
 
       if(content_type == "application/json"){
@@ -324,6 +348,7 @@ DataTableDeserializer = R6Class("DataTableDeserializer",
 
 #' @title TibbleDeserializer Class
 #' @description Deserialize CSV or JSON data from an inference endpoint into a tibble.
+#' @family serializer
 #' @export
 TibbleDeserializer = R6Class("TibbleDeserializer",
   inherit = SimpleBaseDeserializer,
@@ -353,7 +378,11 @@ TibbleDeserializer = R6Class("TibbleDeserializer",
     deserialize = function(stream, content_type){
 
       if(content_type == "text/csv"){
-        return(readr::read_csv(stream, locale = readr::locale(encoding = self$encoding), progress = F))
+        return(readr::read_csv(
+          stream,
+          locale = readr::locale(encoding = self$encoding),
+          progress = F)
+        )
       }
 
       if(content_type == "application/json"){

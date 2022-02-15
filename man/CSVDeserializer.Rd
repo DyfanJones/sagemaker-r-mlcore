@@ -4,10 +4,33 @@
 \alias{CSVDeserializer}
 \title{Deserialize a stream of bytes into a list of lists.}
 \description{
-Consider using :class:~`sagemaker.deserializers.NumpyDeserializer` or
-             :class:~`sagemaker.deserializers.PandasDeserializer` instead, if you'd like to convert text/csv
+Consider using \code{NumpyDeserializer} or
+             \code{DataTableDeserializer} or \code{TibbleDeserializer} instead,
+             if you'd like to convert text/csv
              responses directly into other data types.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{CSVDeserializer}
 }
@@ -70,6 +93,10 @@ Takes raw data stream and deserializes it.
 \item{\code{content_type}}{(str): The MIME type of the data.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+list: The data deserialized into a list of lists representing the
+             contents of a CSV file.
 }
 }
 \if{html}{\out{<hr>}}

@@ -6,6 +6,28 @@
 \description{
 Deserialize a stream of bytes into a bytes object.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{BytesDeserializer}
 }
@@ -36,7 +58,7 @@ Read a stream of bytes returned from an inference endpoint.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{stream}}{(botocore.response.StreamingBody): A stream of bytes.}
+\item{\code{stream}}{(raw): A stream of bytes.}
 
 \item{\code{content_type}}{(str): The MIME type of the data.}
 }

@@ -8,6 +8,28 @@ Deserialize a stream of data in the .npy or UTF-8 CSV/JSON format.
              This serializer class uses python numpy package to deserialize,
              R objects through the use of the `reticulate` package.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpySerializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseDeserializer]{sagemaker.mlcore::BaseDeserializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseDeserializer]{sagemaker.mlcore::SimpleBaseDeserializer}} -> \code{NumpyDeserializer}
 }
@@ -82,7 +104,7 @@ Deserialize data from an inference endpoint into a NumPy array.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-matrix: The data deserialized into a NumPy array.
+matrix: The data deserialized into a R matrix/array.
 }
 }
 \if{html}{\out{<hr>}}

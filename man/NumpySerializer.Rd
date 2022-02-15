@@ -8,6 +8,28 @@ Serialize data of various formats to a numpy npy file format.
              This serializer class uses python numpy package to serialize,
              R objects through the use of the `reticulate` package.
 }
+\seealso{
+Other serializer: 
+\code{\link{BaseDeserializer}},
+\code{\link{BaseSerializer}},
+\code{\link{BytesDeserializer}},
+\code{\link{CSVDeserializer}},
+\code{\link{CSVSerializer}},
+\code{\link{DataTableDeserializer}},
+\code{\link{IdentitySerializer}},
+\code{\link{JSONDeserializer}},
+\code{\link{JSONLinesDeserializer}},
+\code{\link{JSONLinesSerializer}},
+\code{\link{JSONSerializer}},
+\code{\link{LibSVMSerializer}},
+\code{\link{NumpyDeserializer}},
+\code{\link{SimpleBaseDeserializer}},
+\code{\link{SimpleBaseSerializer}},
+\code{\link{SparseMatrixSerializer}},
+\code{\link{StringDeserializer}},
+\code{\link{TibbleDeserializer}}
+}
+\concept{serializer}
 \section{Super classes}{
 \code{\link[sagemaker.mlcore:BaseSerializer]{sagemaker.mlcore::BaseSerializer}} -> \code{\link[sagemaker.mlcore:SimpleBaseSerializer]{sagemaker.mlcore::SimpleBaseSerializer}} -> \code{NumpySerializer}
 }
@@ -39,7 +61,7 @@ Serialize data of various formats to a numpy npy file format.
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Initialize a ``NumpySerializer`` instance.
+Initialize a \code{NumpySerializer} instance.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NumpySerializer$new(dtype = NULL, content_type = "application/x-npy")}\if{html}{\out{</div>}}
 }
