@@ -1979,7 +1979,7 @@ Framework = R6Class("Framework",
     initialize = function(entry_point,
                           source_dir=NULL,
                           hyperparameters=NULL,
-                          container_log_level=c("INFO", "DEBUG", "WARN", "ERROR", "FATAL", "CRITICAL"),
+                          container_log_level="INFO",
                           code_location=NULL,
                           image_uri=NULL,
                           dependencies=NULL,
@@ -2002,15 +2002,17 @@ Framework = R6Class("Framework",
       self$dependencies = dependencies %||% list()
       self$uploaded_code = NULL
 
+      stopifnot(is.character(container_log_level))
       # Align logging level with python logging
-      container_log_level = match.arg(container_log_level)
-      container_log_level = switch(container_log_level,
-                                   "DEBUG" = 10,
-                                   "INFO" = 20,
-                                   "WARN" = 30,
-                                   "ERROR" = 40,
-                                   "FATAL" = 50,
-                                   "CRITICAL" = 50)
+      container_log_level = switch(toupper(container_log_level),
+        "DEBUG" = 10,
+        "INFO" = 20,
+        "WARN" = 30,
+        "ERROR" = 40,
+        "FATAL" = 50,
+        "CRITICAL" = 50,
+        container_log_level
+      )
       self$container_log_level = container_log_level
       self$code_location = code_location
       self$image_uri = image_uri

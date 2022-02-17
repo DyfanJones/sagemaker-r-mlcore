@@ -50,7 +50,7 @@ Initialize a ``FrameworkModel``.
   predictor_cls = NULL,
   env = NULL,
   name = NULL,
-  container_log_level = c("INFO", "DEBUG", "WARN", "ERROR", "FATAL", "CRITICAL"),
+  container_log_level = "INFO",
   code_location = NULL,
   sagemaker_session = NULL,
   dependencies = NULL,
