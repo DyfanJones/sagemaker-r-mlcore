@@ -1712,17 +1712,12 @@ test_that("test_git_support_with_branch_and_commit_succeed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir, {
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(
       git_config,
       entry_point,
@@ -1749,17 +1744,12 @@ test_that("test_git_support_with_branch_succeed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(
     git_config,
     entry_point,
@@ -1787,17 +1777,12 @@ test_that("test_git_support_with_dependencies_succeed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(
     git_config,
     entry_point,
@@ -1824,17 +1809,12 @@ test_that("test_git_support_without_branch_and_commit_succeed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(
     git_config,
     entry_point,
@@ -1893,16 +1873,14 @@ test_that("test_git_support_entry_point_not_exist", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  expect_error(
-    fw$fit(),
-    "Entry point does not exist in the repo.",
-    class = "ValueError"
-  )
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo, {
+      expect_error(
+        fw$fit(),
+        "Entry point does not exist in the repo.",
+        class = "ValueError"
+      )
+  })
 })
 
 test_that("test_git_support_source_dir_not_exist", {
@@ -1918,16 +1896,14 @@ test_that("test_git_support_source_dir_not_exist", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  expect_error(
-    fw$fit(),
-    "Source directory does not exist in the repo.",
-    class = "ValueError"
-  )
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo, {
+      expect_error(
+        fw$fit(),
+        "Source directory does not exist in the repo.",
+        class = "ValueError"
+      )
+  })
 })
 
 test_that("test_git_support_dependencies_not_exist", {
@@ -1944,16 +1920,14 @@ test_that("test_git_support_dependencies_not_exist", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  expect_error(
-    fw$fit(),
-    "Dependency no-such-dir does not exist in the repo.",
-    class = "ValueError"
-  )
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo, {
+      expect_error(
+        fw$fit(),
+        "Dependency no-such-dir does not exist in the repo.",
+        class = "ValueError"
+      )
+  })
 })
 
 test_that("test_git_support_with_username_password_no_2fa", {
@@ -1980,17 +1954,13 @@ test_that("test_git_support_with_username_password_no_2fa", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir, {
+      fw$fit()
+  })
+
   expect_equal(mock_git_clone_repo(..return_value = T), list(git_config, entry_point, NULL, list()))
   expect_equal(fw$entry_point, "/tmp/repo_dir/entry_point")
 })
@@ -2019,17 +1989,11 @@ test_that("test_git_support_with_token_2fa", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir, {
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(git_config, entry_point, NULL, list()))
   expect_equal(fw$entry_point, "/tmp/repo_dir/entry_point")
 })
@@ -2052,17 +2016,12 @@ test_that("test_git_support_ssh_no_passphrase_needed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE,
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(git_config, entry_point, NULL, list()))
   expect_equal(fw$entry_point, "/tmp/repo_dir/entry_point")
 })
@@ -2090,17 +2049,11 @@ test_that("test_git_support_codecommit_with_username_and_password_succeed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(git_config, entry_point, NULL, list()))
   expect_equal(fw$entry_point, "/tmp/repo_dir/entry_point")
 })
@@ -2123,17 +2076,11 @@ test_that("test_git_support_codecommit_with_ssh_no_passphrase_needed", {
     instance_count=INSTANCE_COUNT,
     instance_type=INSTANCE_TYPE
   )
-  assign(
-    "git_clone_repo",
-    mock_git_clone_repo,
-    envir = environment(fw$.prepare_for_training)
-  )
-  assign(
-    "tar_and_upload_dir",
-    mock_tar_and_upload_dir,
-    envir = environment(fw$.__enclos_env__$private$.stage_user_code_in_s3)
-  )
-  fw$fit()
+  with_mock(
+    `sagemaker.core::git_clone_repo` = mock_git_clone_repo,
+    `sagemaker.core::tar_and_upload_dir` = mock_tar_and_upload_dir,{
+      fw$fit()
+  })
   expect_equal(mock_git_clone_repo(..return_value = T), list(git_config, entry_point, NULL, list()))
   expect_equal(fw$entry_point, "/tmp/repo_dir/entry_point")
 })

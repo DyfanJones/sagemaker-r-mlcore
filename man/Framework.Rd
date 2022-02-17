@@ -82,7 +82,7 @@ Base class initializer. Subclasses which override ``__init__`` should
   entry_point,
   source_dir = NULL,
   hyperparameters = NULL,
-  container_log_level = c("INFO", "DEBUG", "WARN", "ERROR", "FATAL", "CRITICAL"),
+  container_log_level = "INFO",
   code_location = NULL,
   image_uri = NULL,
   dependencies = NULL,

@@ -981,7 +981,7 @@ FrameworkModel = R6Class("FrameworkModel",
                          predictor_cls=NULL,
                          env=NULL,
                          name=NULL,
-                         container_log_level=c("INFO", "DEBUG", "WARN", "ERROR", "FATAL", "CRITICAL"),
+                         container_log_level="INFO",
                          code_location=NULL,
                          sagemaker_session=NULL,
                          dependencies=NULL,
@@ -1001,14 +1001,14 @@ FrameworkModel = R6Class("FrameworkModel",
      self$git_config = git_config
      # Align logging level with python logging
      if(!is.numeric(container_log_level)){
-       container_log_level = match.arg(container_log_level)
-       container_log_level = switch(container_log_level,
+       container_log_level = switch(toupper(container_log_level),
          "DEBUG" = 10,
          "INFO" = 20,
          "WARN" = 30,
          "ERROR" = 40,
          "FATAL" = 50,
-         "CRITICAL" = 50
+         "CRITICAL" = 50,
+         container_log_level
         )
      }
      self$container_log_level = as.character(container_log_level)

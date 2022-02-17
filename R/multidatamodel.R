@@ -4,6 +4,7 @@
 #' @include model.R
 
 #' @import R6
+#' @import sagemaker.core
 #' @import sagemaker.common
 #' @importFrom urltools url_parse
 
@@ -244,7 +245,7 @@ MultiDataModel = R6Class("MultiDataModel",
 
       # If the model source is an S3 path, copy the model artifact to the destination S3 path
       if (parse_result$scheme == "s3"){
-        s3_parts = split_s3_uri(model_data_source)
+        s3_parts = parse_s3_url(model_data_source)
         copy_source = list("Bucket"= s3_parts$bucket, "Key"= s3_parts$key)
 
         if (is.null(model_data_path))
@@ -252,7 +253,7 @@ MultiDataModel = R6Class("MultiDataModel",
 
         # Construct the destination path
         dst_url = file.path(self$model_data_prefix, model_data_path)
-        dst_parts = split_s3_uri(dst_url)
+        dst_parts = parse_s3_url(dst_url)
 
         # Copy the model artifact
         self$s3_client$copy_object(Bucket = dst_parts$bucket,
