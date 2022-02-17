@@ -2033,7 +2033,7 @@ Framework = R6Class("Framework",
       super$.prepare_for_training(job_name = job_name)
 
       if (!islistempty(self$git_config)){
-        updated_paths = git_clone_repo(
+        updated_paths = sagemaker.core::git_clone_repo(
           self$git_config, self$entry_point, self$source_dir, self$dependencies)
         self$entry_point = updated_paths$entry_point
         self$source_dir = updated_paths$source_dir
@@ -2295,21 +2295,21 @@ Framework = R6Class("Framework",
         parsed_s3$key = sprintf("%s/%s",self$.current_job_name, "source")
         kms_key = NULL
       } else if(is.null(self$code_location)){
-        parsed_s3 = parse_s3_url(self$output_path)
+        parsed_s3 = sagemaker.core::parse_s3_url(self$output_path)
         parsed_s3$key = sprintf("%s/%s",self$.current_job_name, "source")
         kms_key = self$output_kms_key
       } else if (local_mode) {
-        parsed_s3 = parse_s3_url(self$code_location)
+        parsed_s3 = sagemaker.core::parse_s3_url(self$code_location)
         parsed_s3$key = paste(Filter(Negate(is.na), c(parsed_s3$key, self$.current_job_name, "source")), collapse = "/")
         kms_key = NULL
       } else {
-        parsed_s3 = parse_s3_url(self$code_location)
+        parsed_s3 = sagemaker.core::parse_s3_url(self$code_location)
         parsed_s3$key = paste(Filter(Negate(is.na), c(parsed_s3$key, self$.current_job_name, "source")), collapse = "/")
 
-        output_bucket = parse_s3_url(self$output_path)$bucket
+        output_bucket = sagemaker.core::parse_s3_url(self$output_path)$bucket
         kms_key = if (parsed_s3$bucket == output_bucket) self$output_kms_key else NULL
       }
-      return (tar_and_upload_dir(
+      return (sagemaker.core::tar_and_upload_dir(
         sagemaker_session=self$sagemaker_session,
         bucket=parsed_s3$bucket,
         s3_key_prefix=parsed_s3$key,
@@ -2317,7 +2317,7 @@ Framework = R6Class("Framework",
         directory=self$source_dir,
         dependencies=self$dependencies,
         kms_key=kms_key)
-        )
+      )
     },
 
     # Set defaults for debugging
