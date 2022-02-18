@@ -876,8 +876,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       # (other algorithms may not accept extra hyperparameters)
       if (isTRUE(include_cls_metadata) || inherits(estimator, "Framework")){
         static_hyperparameters[[self$SAGEMAKER_ESTIMATOR_CLASS_NAME]] = class(estimator)[[1]]
-        # R doesn't have a means to reference module to what I am aware of
-        static_hyperparameters[[self$SAGEMAKER_ESTIMATOR_MODULE]] = attritubes(estimator)$`__module__`
+        static_hyperparameters[[self$SAGEMAKER_ESTIMATOR_MODULE]] = estimator$.module
       }
 
       return(static_hyperparameters)
@@ -1062,10 +1061,11 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
             # Categorical parameters needed to be serialized as JSON for our framework
             # containers
             if(inherits(parameter, "CategoricalParameter")
-              && inherits(estimator, "Framework"))
+              && inherits(estimator, "Framework")) {
               tuning_range = parameter$as_json_range(parameter_name)
-            else
+            } else {
               tuning_range = parameter$as_tuning_range(parameter_name)
+            }
             hp_ranges = c(hp_ranges, list(tuning_range))}
           processed_parameter_ranges[[paste0(range_type, "ParameterRanges")]] = hp_ranges
         }
@@ -1180,18 +1180,21 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     # Validate hyperparameter ranges for an estimator
     .validate_parameter_ranges = function(estimator,
                                           hyperparameter_ranges){
-      for(kls in as.list(estimator)){
-        if (inherits(kls, "Hyperparameter")){
-          tryCatch({
-            # The hyperparam names may not be the same as the class attribute that
-            # holds them, for instance: local_lloyd_init_method is called
-            # local_init_method. We need to map these and pass the correct name to
-            # the constructor.
-            parameter_range = hyperparameter_ranges[[kls$name]]
-            if (inherits(parameter_range, "ParameterRange")){
-              private$.validate_parameter_range(kls, parameter_range)}
-            },
-            error = function(e) NULL)
+      for(kls in names(estimator)){
+        if(kls != "training_job_analytics") {
+          if (inherits(estimator[[kls]], "Hyperparameter")){
+            tryCatch({
+              # The hyperparam names may not be the same as the class attribute that
+              # holds them, for instance: local_lloyd_init_method is called
+              # local_init_method. We need to map these and pass the correct name to
+              # the constructor.
+              parameter_range = hyperparameter_ranges[[kls]]
+              if (inherits(parameter_range, "ParameterRange")){
+                private$.validate_parameter_range(estimator[[kls]], parameter_range)
+                }
+              }, error = function(e) NULL
+            )
+          }
         }
       }
     },

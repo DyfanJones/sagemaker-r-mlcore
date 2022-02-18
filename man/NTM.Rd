@@ -17,6 +17,8 @@ The resulting topics contain word groupings based on their statistical distribut
 \item{\code{repo_name}}{sagemaker repo name for framework}
 
 \item{\code{repo_version}}{version of framework}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

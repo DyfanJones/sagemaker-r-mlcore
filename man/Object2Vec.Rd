@@ -19,6 +19,8 @@ It can learn low-dimensional dense embeddings of high-dimensional objects. The e
 \item{\code{repo_version}}{version of framework}
 
 \item{\code{MINI_BATCH_SIZE}}{The size of each mini-batch to use when training.}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

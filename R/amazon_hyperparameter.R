@@ -6,6 +6,7 @@
 #' @title Hyperparameter Class
 #' @description An algorithm hyperparameter with optional validation. Implemented as a
 #'              python descriptor object.
+#' @export
 Hyperparameter = R6Class("Hyperparameter",
   public = list(
 

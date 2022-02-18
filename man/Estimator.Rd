@@ -10,6 +10,13 @@ A generic Estimator to train using any supplied algorithm. This class is
 \section{Super class}{
 \code{\link[sagemaker.mlcore:EstimatorBase]{sagemaker.mlcore::EstimatorBase}} -> \code{Estimator}
 }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{.module}}{mimic python module}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{

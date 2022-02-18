@@ -33,6 +33,10 @@ PCA = R6Class("PCA",
     #' The size of each mini-batch to use when training.
     DEFAULT_MINI_BATCH_SIZE = 500,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.pca",
+
     #' @description A Principal Components Analysis (PCA)
     #'              :class:`~sagemaker.amazon.amazon_estimator.AmazonAlgorithmEstimatorBase`.
     #'              This Estimator may be fit via calls to

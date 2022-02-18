@@ -30,6 +30,10 @@ FactorizationMachines = R6Class("FactorizationMachines",
     #' version of framework
     repo_version = 1,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.factorization_machines",
+
     #' @description Factorization Machines is :class:`Estimator` for general-purpose
     #'              supervised learning.
     #'              Amazon SageMaker Factorization Machines is a general-purpose

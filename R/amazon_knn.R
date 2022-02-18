@@ -30,6 +30,10 @@ KNN = R6Class("KNN",
     #' version of framework
     repo_version = 1,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.knn",
+
     #' @description k-nearest neighbors (KNN) is :class:`Estimator` used for
     #'              classification and regression. This Estimator may be fit via calls to
     #'              :meth:`~sagemaker.amazon.amazon_estimator.AmazonAlgorithmEstimatorBase.fit`.
