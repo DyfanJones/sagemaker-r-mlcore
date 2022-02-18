@@ -1,4 +1,7 @@
 # sagemaker.mlcore 0.2.3:
+## Bug Fix:
+* correctly parse parameters class
+
 ## Minor:
 * Add `.module` field to estimator classes to minic python `cls.__module__`
 

@@ -3,6 +3,7 @@
 
 #' @import R6
 #' @import sagemaker.core
+#' @importFROM jsonlite toJSON
 
 #' @title ParameterRange Class
 #' @description Base class for representing parameter ranges. This is used to define what
@@ -65,10 +66,10 @@ ParameterRange = R6Class("ParameterRange",
         "MinValue"= (if(!inherits(self$min_value, "PipelineParameter"))
           as.character(self$min_value)
           else self$min_value),
-        "MaxValue" = (if(!inherits(self.max_value, "PipelineParameter"))
+        "MaxValue" = (if(!inherits(self$max_value, "PipelineParameter"))
           as.character(self$max_value)
           else self$max_value),
-        "ScalingType"= self$scaling_type,
+        "ScalingType"= self$scaling_type
         )
       )
     },
@@ -158,7 +159,7 @@ CategoricalParameter = R6Class("CategoricalParameter",
    #' @return dict[str, list[str]]: A dictionary that contains the name and values of the
    #'              hyperparameter, where the values are serialized as JSON.
    as_json_range = function(name){
-     return(list(Name = name, Values = list(shQuote(self$values))))
+     return(list(Name = name, Values = lapply(self$values, function(v) as.character(jsonlite::toJSON(v, auto_unbox = T)))))
    },
 
    #' @description Determine if a value is valid within this CategoricalParameter
