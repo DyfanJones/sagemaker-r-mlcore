@@ -3,7 +3,7 @@
 
 #' @import R6
 #' @import sagemaker.core
-#' @importFROM jsonlite toJSON
+#' @importFrom jsonlite toJSON
 
 #' @title ParameterRange Class
 #' @description Base class for representing parameter ranges. This is used to define what

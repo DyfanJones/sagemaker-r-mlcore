@@ -10,6 +10,7 @@ Imports:
     R6,
     sagemaker.core,
     sagemaker.common,
+    stats,
     data.table,
     jsonlite,
     methods,
