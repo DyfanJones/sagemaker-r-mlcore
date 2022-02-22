@@ -367,8 +367,9 @@ LinearLearner = R6Class("LinearLearner",
 
       if(self$predictor_type == "multiclass_classifier" &&
          (is.null(num_classes) || as.integer(num_classes) < 3))
-        stop("For predictor_type 'multiclass_classifier', 'num_classes' should be set to a value greater than 2.",
-             call. = F)
+        ValueError$new(
+          "For predictor_type 'multiclass_classifier', 'num_classes' should be set to a value greater than 2."
+        )
     },
 
     #' @description Return a :class:`~sagemaker.amazon.LinearLearnerModel` referencing
@@ -424,6 +425,7 @@ LinearLearner = R6Class("LinearLearner",
   ),
   private = list(
     # --------- User Active binding to mimic Python's Descriptor Class ---------
+    .predictor_type=NULL,
     .binary_classifier_model_selection_criteria=NULL,
     .target_recall=NULL,
     .target_precision=NULL,
@@ -468,6 +470,16 @@ LinearLearner = R6Class("LinearLearner",
   ),
   active = list(
     # --------- User Active binding to mimic Python's Descriptor Class ---------
+
+    #' @field predictor_type
+    #'  The type of predictor to learn. Either
+    #'  "binary_classifier" or "multiclass_classifier" or "regressor".
+    predictor_type = function(value){
+      if(missing(value))
+        return(private$.predictor_type$descriptor)
+      private$.predictor_type$descriptor = value
+    },
+
     #' @field binary_classifier_model_selection_criteria
     #' One of 'accuracy', 'f1', 'f_beta', 'precision_at_target_recall', 'recall_at_target_precision', 'cross_entropy_loss', 'loss_function'
     binary_classifier_model_selection_criteria = function(value){
