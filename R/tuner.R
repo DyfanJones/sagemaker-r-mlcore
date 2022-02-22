@@ -269,8 +269,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         self$objective_metric_name_list = NULL
         self$.hyperparameter_ranges_list = NULL
         self$metric_definitions_list = NULL
-        self$static_hyperparameters_list = NULL}
-
+        self$static_hyperparameters_list = NULL
+      }
       private$.validate_parameter_ranges(estimator, hyperparameter_ranges)
 
       self$strategy = strategy
@@ -731,7 +731,10 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
                       tags=NULL,
                       warm_start_config=NULL,
                       early_stopping_type="Off"){
-      private$.validate_create_tuner_inputs(
+      # set up class method
+      cls = r6_class_method(HyperparameterTuner)
+
+      cls$private$.validate_create_tuner_inputs(
         estimator_list,
         objective_metric_name_list,
         hyperparameter_ranges_list,
@@ -745,8 +748,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
           metric_definitions_list[[first_estimator_name]]
         else NULL)
 
-      tuner = self$clone()
-      tuner$initialize(
+      tuner = HyperparameterTuner$new(
         base_tuning_job_name=base_tuning_job_name,
         estimator_name=first_estimator_name,
         estimator=estimator_list[[first_estimator_name]],
@@ -759,7 +761,8 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         max_parallel_jobs=max_parallel_jobs,
         tags=tags,
         warm_start_config=warm_start_config,
-        early_stopping_type=early_stopping_type)
+        early_stopping_type=early_stopping_type
+      )
 
       for (estimator_name in estimator_names[2:length(estimator_names)]){
         metric_definitions = (
@@ -1180,21 +1183,20 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     # Validate hyperparameter ranges for an estimator
     .validate_parameter_ranges = function(estimator,
                                           hyperparameter_ranges){
-      for(kls in names(estimator)){
-        if(kls != "training_job_analytics") {
-          if (inherits(estimator[[kls]], "Hyperparameter")){
-            tryCatch({
-              # The hyperparam names may not be the same as the class attribute that
-              # holds them, for instance: local_lloyd_init_method is called
-              # local_init_method. We need to map these and pass the correct name to
-              # the constructor.
-              parameter_range = hyperparameter_ranges[[kls]]
-              if (inherits(parameter_range, "ParameterRange")){
-                private$.validate_parameter_range(estimator[[kls]], parameter_range)
-                }
-              }, error = function(e) NULL
-            )
-          }
+      hp_names = paste0(".", names(hyperparameter_ranges)) %in% names(estimator$.__enclos_env__$private)
+      for(hp in hyperparameter_ranges[hp_names]){
+        if(inherits(estimator$.__enclos_env__$private[[paste0(".", hp)]], "Hyperparameter")){
+          tryCatch({
+            # The hyperparam names may not be the same as the class attribute that
+            # holds them, for instance: local_lloyd_init_method is called
+            # local_init_method. We need to map these and pass the correct name to
+            # the constructor.
+            parameter_range = hyperparameter_ranges[[hp]]
+            if (inherits(parameter_range, "ParameterRange")){
+              private$.validate_parameter_range(estimator[[hp]], parameter_range)
+            }
+          }, error = function(e) NULL
+          )
         }
       }
     },
@@ -1284,19 +1286,19 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       estimator_names = sort(names(estimator_list))
 
       private$.validate_list_argument(
-        name="objective_metric_name_dict",
+        name="objective_metric_name_list",
         value=objective_metric_name_list,
         allowed_keys=estimator_names,
         require_same_keys=TRUE
       )
       private$.validate_list_argument(
-        name="hyperparameter_ranges_dict",
+        name="hyperparameter_ranges_list",
         value=hyperparameter_ranges_list,
         allowed_keys=estimator_names,
         require_same_keys=TRUE
       )
       private$.validate_list_argument(
-        name="metric_definitions_dict",
+        name="metric_definitions_list",
         value=metric_definitions_list,
         allowed_keys=estimator_names
       )
@@ -1306,7 +1308,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     .validate_estimator_list = function(estimatorlist){
       if (islistempty(estimator_list))
         ValueError$new("At least one estimator should be provided")
-      if (NULL %in% names(estimator_list))
+      if (is.null(names(estimator_list)))
         ValueError$new("Estimator names cannot be None")
     },
 
@@ -1315,24 +1317,24 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
                                        value,
                                        allowed_keys,
                                        require_same_keys=FALSE){
-      if (missing(value))
+      if (is.null(value))
         return(NULL)
 
-      if (!inherits(value, list))
+      if (!inherits(value, "list"))
         ValueError$new(sprintf(
-          "Argument '%s' must be a dictionary using %s as keys", name, allowed_keys)
+          "Argument '%s' must be a dictionary using '%s' as keys", name, paste(allowed_keys, collapse = "', '"))
         )
       value_keys = sort(names(value))
 
       if (require_same_keys){
-        if (value_keys != allowed_keys)
+        if (!all(value_keys %in% allowed_keys))
           ValueError$new(sprintf(
-            "The keys of argument '%s' must be the same as %s", name, allowed_keys)
+            "The keys of argument '%s' must be the same as '%s'", name, paste(allowed_keys, collapse = "', '"))
           )
       } else {
         if (!any(value_keys %in% allowed_keys))
           ValueError$new(sprintf(
-            "The keys of argument '%s' must be a subset of %s", name, allowed_keys)
+            "The keys of argument '%s' must be a subset of '%s'", name, paste(allowed_keys, collapse = "', '"))
           )
       }
     },
