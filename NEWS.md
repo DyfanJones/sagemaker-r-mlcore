@@ -1,5 +1,12 @@
 # sagemaker.mlcore 0.2.3:
 ## Bug Fix:
+* Class `HyperparameterTuner` correctly validates hyper parameters
+
+## Feature:
+* Class `HyperparameterTuner` `create` method is now callable at `R6ClassGenerator` level. To help mimic python equivalent.
+
+# sagemaker.mlcore 0.2.3:
+## Bug Fix:
 * correctly parse parameters class
 
 ## Minor:
