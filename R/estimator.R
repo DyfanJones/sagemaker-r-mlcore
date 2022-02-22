@@ -1498,6 +1498,10 @@ Estimator = R6Class("Estimator",
   inherit = EstimatorBase,
   public = list(
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.estimator",
+
     #' @description Initialize an ``Estimator`` instance.
     #' @param image_uri (str): The container image to use for training.
     #' @param role (str): An AWS IAM role (either name or full ARN). The Amazon
@@ -1838,6 +1842,10 @@ Framework = R6Class("Framework",
     #' @field CONTAINER_CODE_CHANNEL_SOURCEDIR_PATH
     #' class metadata
     CONTAINER_CODE_CHANNEL_SOURCEDIR_PATH = "/opt/ml/input/data/code/sourcedir.tar.gz",
+
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.estimator",
 
     #' @description Base class initializer. Subclasses which override ``__init__`` should
     #'              invoke ``super()``

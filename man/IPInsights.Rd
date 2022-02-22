@@ -18,6 +18,8 @@ It is designed to capture associations between IPv4 addresses and various entiti
 \item{\code{repo_version}}{version of framework}
 
 \item{\code{MINI_BATCH_SIZE}}{The size of each mini-batch to use when training. If None, a default value will be used.}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

@@ -29,6 +29,10 @@ AmazonAlgorithmEstimatorBase = R6Class("AmazonAlgorithmEstimatorBase",
     #' Version fo repo to call
     repo_version = NULL,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.amazon_estimator",
+
     #' @description Initialize an AmazonAlgorithmEstimatorBase.
     #' @param role (str): An AWS IAM role (either name or full ARN). The Amazon
     #'              SageMaker training jobs and APIs that create Amazon SageMaker

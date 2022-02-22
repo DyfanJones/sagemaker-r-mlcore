@@ -34,6 +34,10 @@ Object2Vec = R6Class("Object2Vec",
     #' The size of each mini-batch to use when training.
     MINI_BATCH_SIZE = 32,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.object2vec",
+
     #' @description Object2Vec is :class:`Estimator` used for anomaly detection.
     #'              This Estimator may be fit via calls to
     #'              :meth:`~sagemaker.amazon.amazon_estimator.AmazonAlgorithmEstimatorBase.fit`.

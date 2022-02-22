@@ -36,6 +36,10 @@ LinearLearner = R6Class("LinearLearner",
     #' The size of each mini-batch to use when training.
     DEFAULT_MINI_BATCH_SIZE = 1000,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.linear_learner",
+
     #' @description An :class:`Estimator` for binary classification and regression.
     #'              Amazon SageMaker Linear Learner provides a solution for both
     #'              classification and regression problems, allowing for exploring different

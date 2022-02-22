@@ -18,6 +18,8 @@ As a result, number of features within a dataset is reduced but the dataset stil
 \item{\code{repo_version}}{version of framework}
 
 \item{\code{DEFAULT_MINI_BATCH_SIZE}}{The size of each mini-batch to use when training.}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

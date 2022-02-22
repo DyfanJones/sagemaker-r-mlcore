@@ -33,6 +33,10 @@ RandomCutForest = R6Class("RandomCutForest",
     #' The size of each mini-batch to use when training.
     MINI_BATCH_SIZE = 1000,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.randomcutforest",
+
     #' @description An `Estimator` class implementing a Random Cut Forest.
     #'              Typically used for anomaly detection, this Estimator may be fit via calls to
     #'              :meth:`~sagemaker.amazon.amazon_estimator.AmazonAlgorithmEstimatorBase.fit`.

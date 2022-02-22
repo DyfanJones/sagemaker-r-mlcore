@@ -30,6 +30,10 @@ NTM = R6Class("NTM",
     #' version of framework
     repo_version = 1,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.ntm",
+
     #' @description Neural Topic Model (NTM) is :class:`Estimator` used for unsupervised
     #'              learning.
     #'              This Estimator may be fit via calls to

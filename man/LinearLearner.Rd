@@ -22,6 +22,8 @@ For input, you give the model labeled examples (x, y). x is a high-dimensional v
 \item{\code{repo_version}}{version of framework}
 
 \item{\code{DEFAULT_MINI_BATCH_SIZE}}{The size of each mini-batch to use when training.}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

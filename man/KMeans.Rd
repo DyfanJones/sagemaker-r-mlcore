@@ -17,6 +17,8 @@ As the result of KMeans, members of a group are as similar as possible to one an
 \item{\code{repo_name}}{sagemaker repo name for framework}
 
 \item{\code{repo_version}}{version of framework}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

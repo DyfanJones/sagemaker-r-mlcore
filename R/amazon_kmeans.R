@@ -28,6 +28,10 @@ KMeans = R6Class("KMeans",
     #' version of framework
     repo_version = 1,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.kmeans",
+
     #' @description A k-means clustering
     #'              :class:`~sagemaker.amazon.AmazonAlgorithmEstimatorBase`. Finds k
     #'              clusters of data in an unlabeled dataset.

@@ -29,6 +29,8 @@ Base class that cannot be instantiated directly.
 \item{\code{SM_DDP_CUSTOM_MPI_OPTIONS}}{class metadata}
 
 \item{\code{CONTAINER_CODE_CHANNEL_SOURCEDIR_PATH}}{class metadata}
+
+\item{\code{.module}}{mimic python module}
 }
 \if{html}{\out{</div>}}
 }

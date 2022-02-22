@@ -30,6 +30,10 @@ IPInsights = R6Class("IPInsights",
     #' The size of each mini-batch to use when training. If None, a default value will be used.
     MINI_BATCH_SIZE = 10000,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.ipinsight",
+
     #' @description This estimator is for IP Insights, an unsupervised algorithm that
     #'              learns usage patterns of IP addresses.
     #'              This Estimator may be fit via calls to

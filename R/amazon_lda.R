@@ -31,6 +31,10 @@ LDA = R6Class("LDA",
     #' version of framework
     repo_version = 1,
 
+    #' @field .module
+    #' mimic python module
+    .module = "sagemaker.amazon.lda",
+
     #' @description Latent Dirichlet Allocation (LDA) is :class:`Estimator` used for
     #'              unsupervised learning.
     #'              Amazon SageMaker Latent Dirichlet Allocation is an unsupervised
