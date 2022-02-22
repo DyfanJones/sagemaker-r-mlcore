@@ -1184,7 +1184,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
     .validate_parameter_ranges = function(estimator,
                                           hyperparameter_ranges){
       hp_names = paste0(".", names(hyperparameter_ranges)) %in% names(estimator$.__enclos_env__$private)
-      for(hp in hyperparameter_ranges[hp_names]){
+      for(hp in names(hyperparameter_ranges[hp_names])){
         if(inherits(estimator$.__enclos_env__$private[[paste0(".", hp)]], "Hyperparameter")){
           tryCatch({
             # The hyperparam names may not be the same as the class attribute that

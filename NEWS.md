@@ -1,4 +1,4 @@
-# sagemaker.mlcore 0.2.3:
+# sagemaker.mlcore 0.2.4:
 ## Bug Fix:
 * Class `HyperparameterTuner` correctly validates hyper parameters
 
