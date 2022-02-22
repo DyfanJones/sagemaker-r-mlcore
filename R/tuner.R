@@ -1332,7 +1332,7 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
             "The keys of argument '%s' must be the same as '%s'", name, paste(allowed_keys, collapse = "', '"))
           )
       } else {
-        if (!any(value_keys %in% allowed_keys))
+        if (!is_subset(value_keys, allowed_keys))
           ValueError$new(sprintf(
             "The keys of argument '%s' must be a subset of '%s'", name, paste(allowed_keys, collapse = "', '"))
           )

@@ -48,3 +48,7 @@ r6_class_method = function(r6_class_gen, parent_env = parent.frame()){
 
   return(enclos_env)
 }
+
+is_subset = function(A, B){
+  all(unique(A) %in% unique(B))
+}
