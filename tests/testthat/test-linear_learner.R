@@ -127,6 +127,7 @@ test_that("test all hyperparameters", {
   lr = do.call(LinearLearner$new, lr_args)
 
   expect_equal(lr$hyperparameters(), list(
+    predictor_type="binary_classifier",
     binary_classifier_model_selection_criteria="accuracy",
     target_recall=0.5,
     target_precision=0.6,
