@@ -10,6 +10,7 @@
 #' @import lgr
 #' @import R6
 #' @import sagemaker.core
+#' @importFrom stats setNames
 
 AMAZON_ESTIMATOR_MODULE <- "sagemaker.mlcore"
 AMAZON_ESTIMATOR_CLS_NAMES <- list(
@@ -133,15 +134,15 @@ WarmStartConfig = R6Class("WarmStartConfig",
     #' @return list: Containing the "WarmStartType" and
     #'              "ParentHyperParameterTuningJobs" as the first class fields.
     to_input_req = function(){
-      output = list(
-        self$type,
-        lapply(self$parents, function(parent) {
-          ll = list(parent)
-          names(ll) = HyperParameterTuningJobName
-          return(ll)
-        })
+      output = setNames(list(
+          self$type,
+          lapply(self$parents, function(parent) {
+            ll = setNames(list(parent), HyperParameterTuningJobName)
+            return(ll)
+          })
+        ),
+        c(WARM_START_TYPE, PARENT_HYPERPARAMETER_TUNING_JOBS)
       )
-      names(output) = c(WARM_START_TYPE, PARENT_HYPERPARAMETER_TUNING_JOBS)
       return(output)
     },
 
@@ -249,15 +250,11 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
         self$objective_metric_name = NULL
         self$.hyperparameter_ranges = NULL
         self$metric_definitions = NULL
-        self$estimator_list = list(estimator)
-        names(self$estimator_list) = estimator_name
-        self$objective_metric_name_list = list(objective_metric_name)
-        names(self$objective_metric_name_list) = estimator_name
-        self$.hyperparameter_ranges_list = list(hyperparameter_ranges)
-        names(self$.hyperparameter_ranges_list) = estimator_name
+        self$estimator_list = setNames(list(estimator), estimator_name)
+        self$objective_metric_name_list = setNames(list(objective_metric_name), estimator_name)
+        self$.hyperparameter_ranges_list = setNames(list(hyperparameter_ranges), estimator_name)
         if (!is.null(metric_definitions)) {
-          self$metric_definitions_list = list(metric_definitions)
-          names(self$metric_definitions_list) = estimator_name
+          self$metric_definitions_list = setNames(list(metric_definitions), estimator_name)
         } else self$metric_definitions_list = list()
         self$static_hyperparameters = NULL
       } else {
@@ -596,15 +593,17 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
 
     #' @description Return a dictionary of hyperparameter ranges for all estimators in ``estimator_dict``
     hyperparameter_ranges_list = function(){
-      if (!islistempty(self$.hyperparameter_ranges_list))
+      if (islistempty(self$.hyperparameter_ranges_list))
         return(NULL)
 
-      output = lapply(sort(names(self$estimator_list)),
-                      function(estimator_name){
-                        private$.prepare_parameter_ranges_for_tuning(
-                          self$.hyperparameter_ranges_list$estimator_name,
-                          self$estimator_list$estimator_name)})
-      names(output) = sort(names(self$estimator_list))
+      output = setNames(
+        lapply(sort(names(self$estimator_list)),
+               function(estimator_name){
+                 private$.prepare_parameter_ranges_for_tuning(
+                   self$.hyperparameter_ranges_list[[estimator_name]],
+                   self$estimator_list[[estimator_name]])}),
+        sort(names(self$estimator_list))
+      )
       return(output)
     },
 
@@ -852,19 +851,20 @@ HyperparameterTuner = R6Class("HyperparameterTuner",
       }
       self$static_hyperparameters_list = NULL
       if (!islistempty(self$estimator_list)){
-        self$static_hyperparameters_list = lapply(
-          seq_along(self$estimator_list), function(x){
-            estimator_name = names(self$estimator_list)[x]
-            estimator = self$estimator_list[[x]]
+        self$static_hyperparameters_list = setNames(
+          lapply(names(self$estimator_list), function(estimator_name) {
+            estimator = self$estimator_list[[estimator_name]]
             private$.prepare_static_hyperparameters(
               estimator,
-              self$.hyperparameter_ranges_list$estimator_name,
-              if(!inherits(include_cls_metadata, "logical"))
-                include_cls_metadata$estimator_name
-              else include_cls_metadata)
+              self$.hyperparameter_ranges_list[[estimator_name]],
+              (if(!is_list_named(include_cls_metadata))
+                 include_cls_metadata[[estimator_name]] %||% FALSE
+               else include_cls_metadata)
+              )
             }
-          )
-        names(self$static_hyperparameters_list) = names(self$estimator_list)
+          ),
+          names(self$estimator_list)
+        )
       }
     },
 
