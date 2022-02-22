@@ -147,7 +147,7 @@ CategoricalParameter = R6Class("CategoricalParameter",
    #' @return dict[str, list[str]]: A dictionary that contains the name and values
    #'              of the hyperparameter.
    as_tuning_range = function(name){
-   return (list("Name"= name, "Values"= self$values))
+     return (list("Name"= name, "Values"= self$values))
    },
 
    #' @description Represent the parameter range as a dictionary suitable for a request
