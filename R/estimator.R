@@ -15,7 +15,7 @@
 
 #' @title Handle end-to-end Amazon SageMaker training and deployment tasks.
 #' @description For introduction to model training and deployment, see
-#'              http://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html
+#'              \url{http://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html}
 #'              Subclasses must define a way to determine what image to use for training,
 #'              what hyperparameters to use, and how to create an appropriate predictor
 #'              instance.
@@ -83,7 +83,7 @@ EstimatorBase = R6Class("EstimatorBase",
     #'              is located and not the file itself, as local Docker containers
     #'              will try to mount the URI as a volume.
     #'              More information:
-    #'              https://docs.aws.amazon.com/sagemaker/latest/dg/cdf-training.html#td-deserialization
+    #'              \url{https://docs.aws.amazon.com/sagemaker/latest/dg/cdf-training.html#td-deserialization}
     #' @param model_channel_name (str): Name of the channel where 'model_uri' will
     #'              be downloaded (default: 'model').
     #' @param metric_definitions (list[dict]): A list of dictionaries that defines
@@ -99,7 +99,7 @@ EstimatorBase = R6Class("EstimatorBase",
     #'              Managed Spot instances for training. If enabled then the
     #'              `max_wait` arg should also be set.
     #'              More information:
-    #'              https://docs.aws.amazon.com/sagemaker/latest/dg/model-managed-spot-training.html
+    #'              \url{https://docs.aws.amazon.com/sagemaker/latest/dg/model-managed-spot-training.html}
     #'              (default: ``False``).
     #' @param max_wait (int): Timeout in seconds waiting for spot training
     #'              instances (default: NULL). After this amount of time Amazon
@@ -120,7 +120,7 @@ EstimatorBase = R6Class("EstimatorBase",
     #'              :class:`~sagemaker.debugger.Rule` objects used to define
     #'              rules for continuous analysis with SageMaker Debugger
     #'              (default: ``NULL``). For more, see
-    #'              https://sagemaker.readthedocs.io/en/stable/amazon_sagemaker_debugger.html#continuous-analyses-through-rules
+    #'              \url{https://sagemaker.readthedocs.io/en/stable/amazon_sagemaker_debugger.html#continuous-analyses-through-rules}
     #' @param debugger_hook_config (:class:`~sagemaker.debugger.DebuggerHookConfig` or bool):
     #'              Configuration for how debugging information is emitted with
     #'              SageMaker Debugger. If not specified, a default one is created using
@@ -131,10 +131,10 @@ EstimatorBase = R6Class("EstimatorBase",
     #' @param tensorboard_output_config (:class:`~sagemaker.debugger.TensorBoardOutputConfig`):
     #'              Configuration for customizing debugging visualization using TensorBoard
     #'              (default: ``NULL``). For more, see
-    #'              https://sagemaker.readthedocs.io/en/stable/amazon_sagemaker_debugger.html#capture-real-time-tensorboard-data-from-the-debugging-hook
+    #'              \url{https://sagemaker.readthedocs.io/en/stable/amazon_sagemaker_debugger.html#capture-real-time-tensorboard-data-from-the-debugging-hook}
     #' @param enable_sagemaker_metrics (bool): Enables SageMaker Metrics Time
     #'              Series. For more information see:
-    #'              https://docs.aws.amazon.com/sagemaker/latest/dg/API_AlgorithmSpecification.html#SageMaker-Type-AlgorithmSpecification-EnableSageMakerMetricsTimeSeries
+    #'              \url{https://docs.aws.amazon.com/sagemaker/latest/dg/API_AlgorithmSpecification.html#SageMaker-Type-AlgorithmSpecification-EnableSageMakerMetricsTimeSeries}
     #'              (default: ``NULL``).
     #' @param enable_network_isolation (bool): Specifies whether container will
     #'              run in network isolation mode (default: ``False``). Network
@@ -160,6 +160,79 @@ EstimatorBase = R6Class("EstimatorBase",
     #'              the same number of attempts as the value.
     #'              You can cap the total duration for your job by setting ``max_wait`` and ``max_run``
     #'              (default: ``None``)
+    #' @param source_dir (str): The absolute, relative, or  S3 URI Path to a directory
+    #'              with any other training source code dependencies aside from the entry
+    #'              point file (default: None). If ``source_dir`` is an S3 URI, it must
+    #'              point to a tar.gz file. The structure within this directory is preserved
+    #'              when training on Amazon SageMaker. If 'git_config' is provided,
+    #'              'source_dir' should be a relative location to a directory in the Git
+    #'              repo. With the following GitHub repo directory structure,
+    #'              if you need 'train.py' as the entry point and 'test.py' as
+    #'              the training source code, you can assign
+    #'              entry_point='train.py' and source_dir='src'.
+    #' @param git_config (dict[str, str]): Git configurations used for cloning
+    #'              files, including ``repo``, ``branch``, ``commit``,
+    #'              ``2FA_enabled``, ``username``, ``password``, and ``token``. The
+    #'              ``repo`` field is required. All other fields are optional.
+    #'              ``repo`` specifies the Git repository where your training script
+    #'              is stored. If you don't provide ``branch``, the default value
+    #'              'master' is used. If you don't provide ``commit``, the latest
+    #'              commit in the specified branch is used.
+    #'              results in cloning the repo specified in 'repo', then
+    #'              checking out the 'master' branch, and checking out the specified
+    #'              commit.
+    #'              ``2FA_enabled``, ``username``, ``password``, and ``token`` are
+    #'              used for authentication. For GitHub (or other Git) accounts, set
+    #'              ``2FA_enabled`` to 'True' if two-factor authentication is
+    #'              enabled for the account, otherwise set it to 'False'. If you do
+    #'              not provide a value for ``2FA_enabled``, a default value of
+    #'              'False' is used. CodeCommit does not support two-factor
+    #'              authentication, so do not provide "2FA_enabled" with CodeCommit
+    #'              repositories.
+    #'              For GitHub and other Git repos, when SSH URLs are provided, it
+    #'              doesn't matter whether 2FA is enabled or disabled. You should
+    #'              either have no passphrase for the SSH key pairs or have the
+    #'              ssh-agent configured so that you will not be prompted for the SSH
+    #'              passphrase when you run the 'git clone' command with SSH URLs. When
+    #'              HTTPS URLs are provided, if 2FA is disabled, then either ``token``
+    #'              or ``username`` and ``password`` are be used for authentication if provided.
+    #'              ``Token`` is prioritized. If 2FA is enabled, only ``token`` is used
+    #'              for authentication if provided. If required authentication info
+    #'              is not provided, the SageMaker Python SDK attempts to use local credentials
+    #'              to authenticate. If that fails, an error message is thrown.
+    #'              For CodeCommit repos, 2FA is not supported, so '2FA_enabled'
+    #'              should not be provided. There is no token in CodeCommit, so
+    #'              ``token`` should also not be provided. When ``repo`` is an SSH URL,
+    #'              the requirements are the same as GitHub  repos. When ``repo``
+    #'              is an HTTPS URL, ``username`` and ``password`` are used for
+    #'              authentication if they are provided. If they are not provided,
+    #'              the SageMaker Python SDK attempts to use either the CodeCommit
+    #'              credential helper or local credential storage for authentication.
+    #' @param hyperparameters (dict): A dictionary containing the hyperparameters to
+    #'              initialize this estimator with. (Default: None).
+    #' @param container_log_level (str): The log level to use within the container
+    #'              (default: logging.INFO). Valid values are defined in the Python
+    #'              logging module.
+    #' @param code_location (str): The S3 prefix URI where custom code is
+    #'              uploaded (default: None). You must not include a trailing slash because
+    #'              a string prepended with a "/" is appended to ``code_location``. The code
+    #'              file uploaded to S3 is 'code_location/job-name/source/sourcedir.tar.gz'.
+    #'              If not specified, the default ``code location`` is 's3://output_bucket/job-name/'.
+    #' @param entry_point (str): The absolute or relative path to the local Python
+    #'              source file that should be executed as the entry point to
+    #'              training. (Default: None). If ``source_dir`` is specified, then ``entry_point``
+    #'              must point to a file located at the root of ``source_dir``.
+    #'              If 'git_config' is provided, 'entry_point' should be
+    #'              a relative location to the Python source file in the Git repo.
+    #'              You can assign entry_point='src/train.py'.
+    #' @param dependencies (list[str]): A list of absolute or relative paths to directories
+    #'              with any additional libraries that should be exported
+    #'              to the container (default: []). The library folders are
+    #'              copied to SageMaker in the same folder where the entrypoint is
+    #'              copied. If 'git_config' is provided, 'dependencies' should be a
+    #'              list of relative locations to directories with any additional
+    #'              libraries needed in the Git repo.
+    #'              This is not supported with "local code" in Local Mode.
     #' @param ... : update any deprecated parameters passed into class.
     initialize = function(role,
                           instance_count=NULL,
@@ -192,6 +265,13 @@ EstimatorBase = R6Class("EstimatorBase",
                           disable_profiler=FALSE,
                           environment=NULL,
                           max_retry_attempts=NULL,
+                          source_dir=NULL,
+                          git_config=NULL,
+                          hyperparameters=NULL,
+                          container_log_level="INFO",
+                          code_location=NULL,
+                          entry_point=NULL,
+                          dependencies=NULL,
                           ...) {
 
       kwargs = list(...)
@@ -221,12 +301,20 @@ EstimatorBase = R6Class("EstimatorBase",
       self$volume_kms_key = volume_kms_key
       self$max_run = max_run
       self$input_mode = input_mode
-      self$tags = tags
       self$metric_definitions = metric_definitions
       self$model_uri = model_uri
       self$model_channel_name = model_channel_name
       self$code_uri = NULL
       self$code_channel_name = "code"
+      self$source_dir = source_dir
+      self$git_config = git_config
+      self$container_log_level = container_log_level
+      self$.hyperparameters = hyperparameters %||% list()
+      self$code_location = code_location
+      self$entry_point = entry_point
+      self$dependencies = dependencies
+      self$uploaded_code = NULL
+      self$tags = tags
 
       if (self$instance_type %in% c("local", "local_gpu")) {
         if (self$instance_type == "local_gpu" && self$instance_count > 1)
