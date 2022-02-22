@@ -2,6 +2,7 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/amazon/hyperparameter.py
 
 #' @import R6
+#' @import sagemaker.core
 
 #' @title Hyperparameter Class
 #' @description An algorithm hyperparameter with optional validation. Implemented as a
@@ -65,7 +66,7 @@ Hyperparameter = R6Class("Hyperparameter",
           error_message = sprintf("Invalid hyperparameter value %s for %s", value, self$name)
           if (!is.null(self$validation_message))
             error_message = paste0(error_message, ". Expecting: ", self$validation_message)
-          stop(error_message, call. = F)
+          ValueError$new(error_message)
         }
       }
     },
@@ -85,7 +86,7 @@ Hyperparameter = R6Class("Hyperparameter",
     # Placeholder: until get R6 equivalent
     .get = function(){
       if (!(".hyperparameters" %in% names(self$obj)) || !(self$name %in% names(self$obj[[".hyperparameters"]])))
-        stop("Attribute Error", call. = F)
+        AttributeError$new()
       return(self$obj[[".hyperparameters"]][[self$name]])
     },
 
@@ -131,29 +132,29 @@ DataTypes = R6Class("DataTypes",
       tryCatch(
         as.numeric(x),
         warning = function(w) {
-          stop(sprintf("Could not convert object '%s' to numeric", x), call. = F)
-        })
+          ValueError$new(sprintf("Could not convert object '%s' to numeric", x))
+      })
     },
     str = function(x){
       tryCatch(
         as.character(x),
         warning = function(w) {
-          stop(sprintf("Could not convert object '%s' to character", x), call. = F)
-        })
+          ValueError$new(sprintf("Could not convert object '%s' to character", x))
+      })
     },
     int = function(x){
       tryCatch(
         as.integer(x),
         warning = function(w) {
-          stop(sprintf("Could not convert object '%s' to integer", x), call. = F)
+          ValueError$new(sprintf("Could not convert object '%s' to integer", x))
       })
     },
     bool = function(x){
       tryCatch(
         as.logical(x),
         warning = function(w) {
-          stop(sprintf("Could not convert object '%s' to boolean", x), call. = F)
-        })
-      }
+          ValueError$new(sprintf("Could not convert object '%s' to boolean", x))
+      })
+    }
   )
 )
