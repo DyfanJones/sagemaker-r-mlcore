@@ -8,6 +8,7 @@
 #' @import sagemaker.core
 #' @import sagemaker.common
 #' @import lgr
+#' @importFrom stats setNames
 
 NEO_ALLOWED_FRAMEWORKS <- list("mxnet", "tensorflow", "keras", "pytorch", "onnx", "xgboost", "tflite")
 
@@ -1109,16 +1110,16 @@ FrameworkModel = R6Class("FrameworkModel",
           dir_name = paste0("file://", self$source_dir)
      }
 
-     output = list(
+     output = setNames(list(
        script_name,
        dir_name,
        self$container_log_level,
-       self$sagemaker_session$paws_region_name)
-     names(output) = c(
-       toupper(model_parameters$SCRIPT_PARAM_NAME),
-       toupper(model_parameters$DIR_PARAM_NAME),
-       toupper(model_parameters$CONTAINER_LOG_LEVEL_PARAM_NAME),
-       toupper(model_parameters$SAGEMAKER_REGION_PARAM_NAME))
+       self$sagemaker_session$paws_region_name),
+       c(toupper(model_parameters$SCRIPT_PARAM_NAME),
+         toupper(model_parameters$DIR_PARAM_NAME),
+         toupper(model_parameters$CONTAINER_LOG_LEVEL_PARAM_NAME),
+         toupper(model_parameters$SAGEMAKER_REGION_PARAM_NAME))
+     )
      return(output)
     }
   ),
