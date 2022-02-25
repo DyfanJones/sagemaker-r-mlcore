@@ -415,7 +415,7 @@ EstimatorBase = R6Class("EstimatorBase",
         error_message="Cannot get the Debugger artifacts path. The Estimator is not associated with a training job."
       )
       if (!is.null(self$debugger_hook_config))
-        return(file.path(
+        return(fs_path(
           self$debugger_hook_config$s3_output_path,
           self$latest_training_job,
           "debug-output"))
@@ -428,7 +428,7 @@ EstimatorBase = R6Class("EstimatorBase",
       private$.ensure_latest_training_job(
         error_message= "Cannot get the TensorBoard artifacts path. The Estimator is not associated with a training job.")
       if (!is.null(self$debugger_hook_config))
-        return(file.path(
+        return(fs_path(
           self$tensorboard_output_config$s3_output_path,
           self$latest_training_job,
           "tensorboard-output"))
@@ -442,7 +442,7 @@ EstimatorBase = R6Class("EstimatorBase",
         error_message=paste("Cannot get the profiling output artifacts path.",
         "The Estimator is not associated with a training job."))
       if (!is.null(self$profiler_config)){
-        return(file.path(
+        return(fs_path(
           self$profiler_config$s3_output_path,
           self$latest_training_job,
           "profiler-output"))
@@ -1277,8 +1277,8 @@ EstimatorBase = R6Class("EstimatorBase",
       if ("source_s3_uri" %in% names(rule$rule_parameters) %||% list()){
         parse_result = urltools::url_parse(rule$rule_parameters[["source_s3_uri"]])
         if (!identical(parse_result$scheme, "s3")){
-          desired_s3_uri = file.path(
-            "s3:/",
+          desired_s3_uri = s3_path_join(
+            "s3://",
             self$sagemaker_session$default_bucket(),
             rule$name,
             uuid::UUIDgenerate())
@@ -1559,7 +1559,7 @@ EstimatorBase = R6Class("EstimatorBase",
         LOGGER$warn(paste(
           "No finished training job found associated with this estimator.",
           "Please make sure this estimator is only used for building workflow config"))
-        model_uri = file.path(self$output_path, self$.current_job_name, "output", "model.tar.gz")
+        model_uri = join_path(self$output_path, self$.current_job_name, "output", "model.tar.gz")
       }
 
       return(model_uri)

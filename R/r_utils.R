@@ -52,3 +52,12 @@ r6_class_method = function(r6_class_gen, parent_env = parent.frame()){
 is_subset = function(A, B){
   all(unique(A) %in% unique(B))
 }
+
+fs_path = function(...){
+  return(as.character(fs::path(...)))
+}
+
+join_path = function(...){
+  args = list(...)
+  paste(trimws(args, whitespace="/"), collapse="/")
+}

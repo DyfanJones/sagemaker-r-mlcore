@@ -1076,7 +1076,7 @@ FrameworkModel = R6Class("FrameworkModel",
       }
       if (repack && !is.null(self$model_data) && !is.null(self$entry_point)){
         bucket = self$bucket %||% self$sagemaker_session$default_bucket()
-        repacked_model_data = paste0("s3://", paste(c(bucket, key_prefix, "model.tar.gz"), collapse = "/"))
+        repacked_model_data = s3_path_join("s3://", bucket, key_prefix, "model.tar.gz")
 
         repack_model(
           inference_script=self$entry_point,
