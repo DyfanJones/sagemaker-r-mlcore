@@ -8,6 +8,7 @@ Description: `sagemaker` machine learning core classes and methods.
 Imports:
     lgr,
     R6,
+    fs,
     sagemaker.core,
     sagemaker.common,
     stats,
