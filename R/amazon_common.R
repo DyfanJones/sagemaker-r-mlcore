@@ -1,7 +1,7 @@
 # NOTE: This code has been modified from AWS Sagemaker Python:
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/amazon/common.py
 
-# Note: this file has been split into components sagemaker.local and this package
+# Note: this file has been split into components sagemaker.core and this package
 
 #' @include serializers.R
 #' @include deserializers.R
