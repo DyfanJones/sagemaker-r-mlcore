@@ -125,9 +125,15 @@ Hyperparameter = R6Class("Hyperparameter",
   )
 )
 
-# Throw error when failed to convert object
+#' @title Helper class to check data types
+#' @description Throw error when failed to convert object
+#' @keywords internal
+#' @export
 DataTypes = R6Class("DataTypes",
   public = list(
+
+    #' @description set numeric type
+    #' @param x (object): R object to be converted
     float = function(x){
       tryCatch(
         as.numeric(x),
@@ -135,6 +141,9 @@ DataTypes = R6Class("DataTypes",
           ValueError$new(sprintf("Could not convert object '%s' to numeric", x))
       })
     },
+
+    #' @description set character type
+    #' @param x (object): R object to be converted
     str = function(x){
       tryCatch(
         as.character(x),
@@ -142,6 +151,9 @@ DataTypes = R6Class("DataTypes",
           ValueError$new(sprintf("Could not convert object '%s' to character", x))
       })
     },
+
+    #' @description set integer type
+    #' @param x (object): R object to be converted
     int = function(x){
       tryCatch(
         as.integer(x),
@@ -149,6 +161,9 @@ DataTypes = R6Class("DataTypes",
           ValueError$new(sprintf("Could not convert object '%s' to integer", x))
       })
     },
+
+    #' @description set boolean type
+    #' @param x (object): R object to be converted
     bool = function(x){
       tryCatch(
         as.logical(x),
