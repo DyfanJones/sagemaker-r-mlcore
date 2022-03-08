@@ -4,13 +4,7 @@
 \alias{predict.Predictor}
 \title{S3 method that wraps Predictor Class}
 \usage{
-\method{predict}{Predictor}(
-  object,
-  newdata,
-  serializer = CSVSerializer$new(),
-  deserializer = CSVDeserializer$new(),
-  ...
-)
+\method{predict}{Predictor}(object, newdata, serializer = NULL, deserializer = NULL, ...)
 }
 \arguments{
 \item{object}{a sagemaker model}
@@ -18,11 +12,10 @@
 \item{newdata}{data for model to predict}
 
 \item{serializer}{method class to serializer data to sagemaker model. Requires to be
-a class inherited from \link{BaseSerializer}. (Default: \link{CSVSerializer})}
+a class inherited from \link{BaseSerializer}.}
 
 \item{deserializer}{method class to deserializer return data streams from sagemaker model.
-Requires to be a class inherited from \link{BaseDeserializer}.
-(Default: \link{CSVDeserializer})}
+Requires to be a class inherited from \link{BaseDeserializer}.}
 
 \item{...}{arguments passed to ``Predictor$predict``}
 }

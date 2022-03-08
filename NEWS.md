@@ -1,3 +1,9 @@
+# sagemaker.mlcore 0.3.0:
+## Architecture Change:
+* moved all Amazon machine learning framework classes to `sagemaker.mlframework`
+* moved clarify classes and method to `sagemaker.common`
+** NOTE:** this changes reduce package overall size from `5Mb` to `3.7Mb` align to `CRAN` package size limitations.
+
 # sagemaker.mlcore 0.2.4:
 ## Bug Fix:
 * Class `HyperparameterTuner` correctly validates hyper parameters
