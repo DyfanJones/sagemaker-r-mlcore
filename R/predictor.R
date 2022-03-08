@@ -498,20 +498,23 @@ Predictor = R6Class("Predictor",
 #' @param object a sagemaker model
 #' @param newdata data for model to predict
 #' @param serializer method class to serializer data to sagemaker model. Requires to be
-#'              a class inherited from \link{BaseSerializer}. (Default: \link{CSVSerializer})
+#'              a class inherited from \link{BaseSerializer}.
 #' @param deserializer method class to deserializer return data streams from sagemaker model.
 #'              Requires to be a class inherited from \link{BaseDeserializer}.
-#'              (Default: \link{CSVDeserializer})
 #' @param ... arguments passed to ``Predictor$predict``
 #' @export
-predict.Predictor <- function(object, newdata, serializer = CSVSerializer$new(), deserializer = CSVDeserializer$new(), ...){
+predict.Predictor <- function(object, newdata, serializer = NULL, deserializer = NULL, ...){
   stopifnot(is.null(serializer) || inherits(serializer,"BaseSerializer"),
             is.null(deserializer) || inherits(deserializer,"BaseDeserializer"))
 
-  obj = object$clone()
-  obj$serializer = serializer
-  obj$deserializer = deserializer
-  obj$predict(newdata, ...)
-}
+  if(!(is.null(serializer) || is.null(deserializer)))
+    object = object$clone()
 
-# TODO: R s3 methods for all aws modelling methods
+  if(!is.null(serializer))
+    object$serializer = serializer
+
+  if(!is.null(deserializer))
+    object$deserializer = deserializer
+
+  return(object$predict(newdata, ...))
+}
