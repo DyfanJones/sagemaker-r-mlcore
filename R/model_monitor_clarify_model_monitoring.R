@@ -2,11 +2,11 @@
 # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/model_monitor/clarify_model_monitoring.py
 
 #' @include r_utils.R
-#' @include clarify.R
 #' @include model_monitor_model_monitoring.R
 
 #' @import R6
 #' @import sagemaker.core
+#' @import sagemaker.common
 #' @import lgr
 #' @import uuid
 #' @import jsonlite
