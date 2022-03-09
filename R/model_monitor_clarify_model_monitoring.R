@@ -66,7 +66,7 @@ ClarifyModelMonitor = R6Class("ClarifyModelMonitor",
       session = sagemaker_session %||% Session$new()
       clarify_image_uri = ImageUris$new()$retrieve("clarify", session$paws_region_name)
 
-      super$new(
+      super$initialize(
         role=role,
         image_uri=clarify_image_uri,
         instance_count=instance_count,
@@ -148,8 +148,10 @@ ClarifyModelMonitor = R6Class("ClarifyModelMonitor",
     # If not specified then a default one will be generated.
     # Returns:
     #   str: The S3 uri of the uploaded file(s).
-    .upload_analysis_config = function(){
-      s3_uri = file.path(
+    .upload_analysis_config = function(analysis_config,
+                                       output_s3_uri,
+                                       job_definition_name){
+      s3_uri = s3_path_join(
         output_s3_uri,
         job_definition_name,
         UUIDgenerate(),
