@@ -1086,7 +1086,7 @@ ModelMonitor = R6Class("ModelMonitor",
          MonitoringScheduleConfig=monitoring_schedule_config)
       private$.wait_for_schedule_changes_to_apply()
    },
-   .frame_work="model-monitor"
+   .frame_work = "model-monitor"
   ),
   lock_objects = F
 )
@@ -1143,7 +1143,7 @@ DefaultModelMonitor = R6Class("DefaultModelMonitor",
                           tags=NULL,
                           network_config=NULL){
       session = sagemaker_session %||% sagemaker.core::Session$new()
-      super$intialize(
+      super$initialize(
         role=role,
         image_uri=private$.get_default_image_uri(session$paws_region_name),
         instance_count=instance_count,
